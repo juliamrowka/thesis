@@ -31,14 +31,17 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'debug_toolbar',
-    'polls.apps.PollsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'debug_toolbar',
+    
+    'polls.apps.PollsConfig',
+    'crm.apps.CrmConfig',
 ]
 
 MIDDLEWARE = [
@@ -82,8 +85,8 @@ DATABASES = {
         'NAME': 'web_app_database',
         'USER': 'julia',
         'PASSWORD': 'admin',
-        "HOST": "localhost",
-        "PORT": "3306",
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
