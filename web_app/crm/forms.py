@@ -31,7 +31,8 @@ class SignUpForm(UserCreationForm):
         self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'
 
 class DocumentForm(forms.ModelForm):
-    
+    description = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Description'}))
+    document = forms.FileField(label="", widget=forms.FileInput(attrs={'class':'form-control'}))    
     class Meta:
         model = Document
         fields = ('description', 'document')

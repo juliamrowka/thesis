@@ -1,0 +1,33 @@
+<!-- <table class="table">
+    {% if documents %}
+
+    {% for document in documents %}
+    <tr>
+        <td><a href="{{ document.document.url }}">{{ document.document.name }}</a> </td>
+        <td></td>
+        <td></td>
+        <td><a href="delete/{{ document.document.name }}"> Delete</a></td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <p>No documents</p>
+    {% endif %}
+</table> -->
+
+{% if documents %}
+<table class="table">
+    <thead>
+        
+    </thead>
+    {% for document in documents %}
+    <tr>
+        <td><a href="{{ document.document.url }}">{{ document.document.name }}</a> </td>
+        <td>{{ document.description }}</td>
+        <td>{{ document.uploaded_at }}</td>
+        <td><a href="delete/{{ document.document.name }}"> Delete</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No documents</p>
+{% endif %}

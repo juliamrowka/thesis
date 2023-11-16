@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 #     return 'user_{0}/{1}'.format(instance.user.id, filename)
 
 class Document(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to='documents/%Y/%m/%d/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
