@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm, DocumentForm
-from .models import Document
+from .forms import SignUpForm
+# from .models import Document
 import openpyxl
 import joblib
 
@@ -25,9 +25,6 @@ def home(request):
     else:
         return render(request, 'home.html', {})
 
-# def login_user(request):
-#     pass
-
 def logout_user(request):
     logout(request)
     messages.success(request, "You have been logged out...")
@@ -49,55 +46,6 @@ def register_user(request):
         form = SignUpForm()
         return render(request, 'register.html', {'form':form})
     return render(request, 'register.html', {'form':form})
-
-def model_form_upload(request):
-    # if request.user is not None:
-        if request.method == 'POST':
-            form = DocumentForm(request.POST, request.FILES)
-            if form.is_valid():
-                newdoc = Document(document = request.FILES['document'], description = request.POST['description'])
-                newdoc.user = request.user
-                newdoc.save()
-                messages.success(request, "You have successfully uploaded file!")
-                return redirect('upload')
-        else:
-            form = DocumentForm()
-            # return render(request, 'upload.html', {'form': form})
-        documents = Document.objects.filter(user=request.user)
-        return render(request, 'upload.html', {'documents': documents, 'form': form})
-
-# def model_form_upload(request):
-#     # if request.user is not None:
-#         if request.method == 'POST':
-#             form = DocumentForm(request.POST, request.FILES)
-#             if form.is_valid():
-#                 newdoc = Document(document = request.FILES['document'], description = request.POST['description'])
-#                 newdoc.user = request.user
-#                 newdoc.save()
-#                 messages.success(request, "You have successfully uploaded file!")
-#                 return redirect('upload')
-#             # excel_file = request.FILES["excel_file"]
-#             # wb = openpyxl.load_workbook(excel_file)
-#             # worksheet = wb ["Sheet1"]
-#             # print(worksheet)
-#             # excel_data = list()
-#             # # iterating over the rows and
-#             # # getting value from each cell in row
-#             # for row in worksheet.iter_rows():
-#             #     row_data = list()
-#             #     for cell in row:
-#             #         row_data.append(str(cell.value))
-#             #     excel_data.append(row_data)
-#             # return render(request, 'upload.html', {'excel_data': excel_data})
-#         else:
-#             form = DocumentForm()
-#             # return render(request, 'upload.html', {'form': form})
-#         documents = Document.objects.filter(user=request.user)
-#         return render(request, 'upload.html', {'documents': documents, 'form': form})
-
-
-def experiment(request):
-      return render(request, 'experiment.html', {})
 
 # form vine page
 loaded_rf_model = joblib.load("ML_Model/rf_model.joblib")

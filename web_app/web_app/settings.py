@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     
     'polls.apps.PollsConfig',
     'crm.apps.CrmConfig',
+    'experiment.apps.ExperimentConfig'
 ]
 
 MIDDLEWARE = [
