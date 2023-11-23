@@ -2,19 +2,64 @@
 
 {% block content %}
 
-<div class="col-md-6 offset-md-3"></div>
-<h1>Upload File</h1>
-<br/>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-secondary">Upload</button>
-  </form>
+<div class="d-flex">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+    <a href="/"
+      class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+      <span class="fs-4">Steps</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <a href="{% url 'upload' %}" class="nav-link">
+          <div class="d-grid"><button type="submit" class="btn btn-primary">Choose data file</button></div>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link text-white">
+          <div class="d-grid"><button type="submit" class="btn btn-primary">Add tranformation</button></div>
 
-  <p><a href="{% url 'home' %}">Return to home</a></p>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link text-white">
+          <div class="d-grid"><button type="submit" class="btn btn-primary">Add estimator</button></div>
 
-  {% include 'document_list.html' %}
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link text-white">
+          <div class="d-grid"><button type="submit" class="btn btn-primary">Add evaluation method</button></div>
 
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link text-white">
+          <div class="d-grid"><button type="submit" class="btn btn-primary">Compute</button></div>
+
+        </a>
+      </li>
+    </ul>
+    <hr>
+  </div>
+  <div class="d-flex flex-column flex-shrink-0 p-3">
+    <h1>Upload File</h1>
+    <br />
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-secondary">Upload</button>
+    </form>
+    <p><a href="{% url 'home' %}">Return to home</a></p>
+  </div>
+  {% for row in excel_data %}
+  {% for cell in row %}
+  {{ cell }}&nbsp;&nbsp;
+  {% endfor %}
+  <br>
+  {% endfor %}
 </div>
+
+
 
 {% endblock %}
