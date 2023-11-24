@@ -13,12 +13,18 @@ def model_form_upload(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             form = DocumentForm(request.POST, request.FILES)
-            if form.is_valid():
+            filename = "documents/user_" + str(request.user.id) + "/" + str(request.FILES['document'])
+            # messages.success(request, filename)
+            files = Document.objects.filter(document = filename, user = request.user)
+            # messages.success(request, files.count())
+            if form.is_valid() and files.count() == 0:
                 newdoc = Document(document = request.FILES['document'], description = request.POST['description'])
                 newdoc.user = request.user
                 newdoc.save()
                 messages.success(request, "You have successfully uploaded file!")
                 return redirect('upload')
+            elif files.count() > 0:
+                messages.success(request, "A file with that name already exists.")
         else:
             form = DocumentForm()
             # return render(request, 'upload.html', {'form': form})
@@ -59,4 +65,8 @@ def model_form_upload(request):
 
 
 def experiment(request):
-      return render(request, 'experiment.html', {})
+      if request.user.is_authenticated:
+        return render(request, 'experiment.html', {})
+      else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
