@@ -4,7 +4,7 @@
 
 <div class="d-flex">
   <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-    <a href="/"
+    <a href="{% url 'experiment' %}"
       class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
       <span class="fs-4">Steps</span>
     </a>
@@ -52,14 +52,28 @@
     </form>
     <p><a href="{% url 'home' %}">Return to home</a></p>
   </div>
-  {% for row in excel_data %}
+  <div class="d-flex flex-column flex-shrink-0 p-3">
+    <div data-bs-smooth-scroll="true">
+      <table class="table">
+        {% for row in excel_data %}
+        <tr>
+          {% for cell in row %}
+          <th scope="row">{{ cell }}</th>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+
+  <!-- {% for row in excel_data %}
   {% for cell in row %}
   {{ cell }}&nbsp;&nbsp;
   {% endfor %}
   <br>
-  {% endfor %}
+  {% endfor %} -->
+
 </div>
-
-
 
 {% endblock %}

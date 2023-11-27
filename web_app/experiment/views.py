@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import DocumentForm
 from .models import Document
-# import openpyxl
+import openpyxl
+import pandas as pd
 # import joblib
 
 # Create your views here.
@@ -25,11 +26,26 @@ def model_form_upload(request):
                 return redirect('upload')
             elif files.count() > 0:
                 messages.success(request, "A file with that name already exists.")
+            excel_file = request.FILES['document']
+            # print(excel_file)
+            # data = pd.read_excel(io=excel_file)
+            # print(data)
+            wb = openpyxl.load_workbook(excel_file)
+            worksheet = wb.active
+            print(worksheet)
+            excel_data = list()
+            # iterating over the rows and
+            # getting value from each cell in row
+            for row in worksheet.iter_rows():
+                row_data = list()
+                for cell in row:
+                    row_data.append(str(cell.value))
+                excel_data.append(row_data)
         else:
             form = DocumentForm()
             # return render(request, 'upload.html', {'form': form})
         documents = Document.objects.filter(user=request.user)
-        return render(request, 'upload.html', {'documents': documents, 'form': form})
+        return render(request, 'upload.html', {'documents': documents, 'form': form, 'excel_data': excel_data})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
