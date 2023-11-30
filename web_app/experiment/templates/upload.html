@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="d-flex">
+<div class="container">
   <!-- <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
     <a href="{% url 'experiment' %}"
       class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -42,18 +42,35 @@
     </ul>
     <hr>
   </div> -->
-  <div class="d-flex flex-column flex-shrink-0 p-3">
-    <h1>Upload File</h1>
-    <br />
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-secondary">Upload</button>
-    </form>
-    <p><a href="{% url 'home' %}">Return to home</a></p>
-  </div>
-  <div class="d-flex flex-column flex-shrink-0 p-3">
-    <div data-bs-smooth-scroll="true">
+
+
+  {% if documents %}
+  <table class="table table-hover ">
+    <thead>
+      <td>Document path</td>
+      <td>Description</td>
+      <td>Uploaded at</td>
+      <td>Action</td>
+    </thead>
+    <tbody class="table-group-divider">
+      {% for document in documents %}
+      <tr>
+        <td><a href="{{ document.document.url }}">{{ document.document.name }}</a> </td>
+        <td>{{ document.description }}</td>
+        <td>{{ document.uploaded_at }}</td>
+        <td><a href="delete/{{ document.document.name }}"> Delete</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No documents</p>
+  {% endif %}
+
+
+  {% if excel_data %}
+  <div class="row">
+    <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 200px;">
       <table class="table">
         {% for row in excel_data %}
         <tr>
@@ -63,6 +80,20 @@
         </tr>
         {% endfor %}
       </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row flex-shrink-0 p-3">
+    <div class="col-5 mx-auto">
+      <h1>Upload File</h1>
+      <br />
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-secondary">Upload</button>
+      </form>
+      <p><a href="{% url 'home' %}">Return to home</a></p>
     </div>
   </div>
 
