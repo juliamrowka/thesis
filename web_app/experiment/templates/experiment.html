@@ -35,7 +35,8 @@
 
     {% if excel_data %}
     <div class="row">
-        <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 200px;">
+        <p>Źródło danych: <strong>{{ excel_name }}</strong></p>
+        <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 300px;">
             <table class="table">
                 {% for row in excel_data %}
                 <tr>

@@ -1,12 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 # from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import DocumentForm
 from .models import Document
-import openpyxl
-from io import BytesIO
-# import pandas as pd
+import openpyxl as op
+# from io import BytesIO
+import pandas as pd
+from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.compose import ColumnTransformer
+import numpy as np
 # import joblib
 # Create your views here.
 
@@ -25,7 +29,7 @@ def model_form_upload(request):
                 newdoc.save()
                 messages.success(request, "You have successfully uploaded file!")
                 request.session['filename'] = filename
-                return redirect('upload')
+                return redirect('experiment')
             elif files.count() > 0:
                 messages.success(request, "A file with that name already exists.")
         else:
@@ -96,18 +100,69 @@ def model_form_upload(request):
 
 def experiment(request):
       if request.user.is_authenticated:
-        excel_data = list()
-        wb = openpyxl.load_workbook(request.session['filename'])
-        worksheet = wb.active
-        print(worksheet)
-        # iterating over the rows and
-        # getting value from each cell in row
-        for row in worksheet.iter_rows():
-            row_data = list()
-            for cell in row:
-                row_data.append(str(cell.value))
-            excel_data.append(row_data)
-        return render(request, 'experiment.html', {'excel_data': excel_data})
+        if 'filename' in request.session:
+            excel_name = str(request.session['filename'])
+            excel_data = list()
+            wb = op.load_workbook(request.session['filename'])
+            worksheet = wb.active
+            print(worksheet)
+            # iterating over the rows and
+            # getting value from each cell in row
+            for row in worksheet.iter_rows():
+                row_data = list()
+                for cell in row:
+                    row_data.append(str(cell.value))
+                excel_data.append(row_data)
+            return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name})
+        else:
+            messages.success(request, "You need to choose or upload a file first")
+            return redirect('upload') 
       else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+      
+# def choose_file(request, file_id):
+#     filename = get_object_or_404(Document, pk=file_id)
+#     print(filename)
+#     request.session['filename'] = filename
+#     return redirect('home')
+my_dict = {'StandardScaler': StandardScaler(), 'MinMaxScaler': MinMaxScaler()}
+
+def transformer(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            column = request.POST['choosen_column']
+            print(column)
+            wb = op.load_workbook(request.session['filename'])
+            ws = wb.active
+            print(ws)
+            df = pd.DataFrame(ws.values)
+            print(df)
+            request.session['my_pipeline'] = list()
+            # request.session['my_pipeline'].append(('std',StandardScaler(),[int(column)]))
+
+            request.session['my_pipeline'].append(['std','StandardScaler',[int(column)]])
+            request.session['my_pipeline'].append(['minmax','MinMaxScaler',[int(column)]])
+            pipe = request.session['my_pipeline']
+            print(f'Pipe: {pipe}')
+            print('StandardScaler' in pipe[0])
+            if 'StandardScaler' in pipe[0]:
+                n_index = pipe[0].index('StandardScaler')
+                print(f'n_index: {n_index}')
+                std = my_dict["StandardScaler"]
+                print(f'std: {std}')
+                pipe[0][n_index] = my_dict['StandardScaler']
+                # print(pipe)
+                # pass
+            # ct = ColumnTransformer()
+            # here temporary - finally in execute view
+            # ct.fit(df)
+            # res_ct=ct.transform(df)
+            # print(res_ct)
+
+        else:
+            pass
+        return render(request, 'transformer.html', {})
+    else:
         messages.success(request, "You need to log in first")
         return redirect('home')
