@@ -3,47 +3,6 @@
 {% block content %}
 
 <div class="container">
-  <!-- <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-    <a href="{% url 'experiment' %}"
-      class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-      <span class="fs-4">Steps</span>
-    </a>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item">
-        <a href="{% url 'upload' %}" class="nav-link">
-          <div class="d-grid"><button type="submit" class="btn btn-primary">Choose data file</button></div>
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <div class="d-grid"><button type="submit" class="btn btn-primary">Add tranformation</button></div>
-
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <div class="d-grid"><button type="submit" class="btn btn-primary">Add estimator</button></div>
-
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <div class="d-grid"><button type="submit" class="btn btn-primary">Add evaluation method</button></div>
-
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <div class="d-grid"><button type="submit" class="btn btn-primary">Compute</button></div>
-
-        </a>
-      </li>
-    </ul>
-    <hr>
-  </div> -->
-
-
   {% if documents %}
   <table class="table table-hover ">
     <thead>
@@ -55,7 +14,7 @@
     <tbody class="table-group-divider">
       {% for document in documents %}
       <tr>
-        <td><a href="{{ document.document.url }}">{{ document.document.name }}</a> </td>
+        <td><a href="{% url 'file' document.id %}">{{ document.document.name }}</a> </td>
         <td>{{ document.description }}</td>
         <td>{{ document.uploaded_at }}</td>
         <td><a href="delete/{{ document.document.name }}"> Delete</a></td>
@@ -66,24 +25,6 @@
   {% else %}
   <p>No documents</p>
   {% endif %}
-
-
-  <!-- {% if excel_data %}
-  <div class="row">
-    <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 200px;">
-      <table class="table">
-        {% for row in excel_data %}
-        <tr>
-          {% for cell in row %}
-          <th scope="row">{{ cell }}</th>
-          {% endfor %}
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-  </div>
-  {% endif %} -->
-
   <div class="row flex-shrink-0 p-3">
     <div class="col-5 mx-auto">
       <h1>Upload File</h1>
@@ -96,15 +37,6 @@
       <p><a href="{% url 'home' %}">Return to home</a></p>
     </div>
   </div>
-
-
-  <!-- {% for row in excel_data %}
-  {% for cell in row %}
-  {{ cell }}&nbsp;&nbsp;
-  {% endfor %}
-  <br>
-  {% endfor %} -->
-
 </div>
 
 {% endblock %}

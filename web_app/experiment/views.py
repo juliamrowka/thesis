@@ -42,6 +42,18 @@ def model_form_upload(request):
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
+    
+def choosen_file(request, pk):
+    if request.user.is_authenticated:
+        choosen_file = Document.objects.get(id=pk)
+        filename = choosen_file.document
+        messages.success(request, "You have successfully chose file!")
+        request.session['filename'] = str(filename)
+        print(filename)
+        return redirect('upload')
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
 
 def experiment(request):
       if request.user.is_authenticated:

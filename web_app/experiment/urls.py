@@ -4,8 +4,9 @@ from . import forms
 
 # app_name = "crm" #application namespace
 urlpatterns = [
-    path('upload/', views.model_form_upload, name='upload'),
     path('', views.experiment, name='experiment'),
+    path('upload/', views.model_form_upload, name='upload'),
+    path('file/<int:pk>', views.choosen_file, name='file'),
     path('transformer/', views.transformer, name='transformer'),
     path('transformer/std', views.std, name='std'),
     path('transformer/minmax', views.minmax, name='minmax'),
