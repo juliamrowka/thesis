@@ -11,6 +11,7 @@ from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.compose import ColumnTransformer
 import numpy as np
+import pickle
 # import joblib
 # Create your views here.
 
@@ -29,6 +30,7 @@ def model_form_upload(request):
                 newdoc.save()
                 messages.success(request, "You have successfully uploaded file!")
                 request.session['filename'] = filename
+                
                 return redirect('experiment')
             elif files.count() > 0:
                 messages.success(request, "A file with that name already exists.")
@@ -40,63 +42,6 @@ def model_form_upload(request):
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
-    
-# def preview_file(request):
-#     if request.user.is_authenticated:
-#         excel_data = list()
-#         print(excel_file)
-#         if request.FILE:
-#             excel_file = request.FILES['document']
-#             # print(excel_file)
-#             # data = pd.read_excel(io=excel_file)
-#             # print(data)
-#             wb = openpyxl.load_workbook(excel_file)
-#             worksheet = wb.active
-#             print(worksheet)
-#             # iterating over the rows and
-#             # getting value from each cell in row
-#             for row in worksheet.iter_rows():
-#                 row_data = list()
-#                 for cell in row:
-#                     row_data.append(str(cell.value))
-#                 excel_data.append(row_data)
-#             return render(request, 'upload.html', {'excel_data': excel_data})
-#         else:
-#             messages.success(request, "no file uploaded")
-#             return redirect('upload')
-#     else:
-#         messages.success(request, "You need to log in first")
-#         return redirect('home') 
-
-# def model_form_upload(request):
-#     # if request.user is not None:
-#         if request.method == 'POST':
-#             form = DocumentForm(request.POST, request.FILES)
-#             if form.is_valid():
-#                 newdoc = Document(document = request.FILES['document'], description = request.POST['description'])
-#                 newdoc.user = request.user
-#                 newdoc.save()
-#                 messages.success(request, "You have successfully uploaded file!")
-#                 return redirect('upload')
-#             # excel_file = request.FILES["excel_file"]
-#             # wb = openpyxl.load_workbook(excel_file)
-#             # worksheet = wb ["Sheet1"]
-#             # print(worksheet)
-#             # excel_data = list()
-#             # # iterating over the rows and
-#             # # getting value from each cell in row
-#             # for row in worksheet.iter_rows():
-#             #     row_data = list()
-#             #     for cell in row:
-#             #         row_data.append(str(cell.value))
-#             #     excel_data.append(row_data)
-#             # return render(request, 'upload.html', {'excel_data': excel_data})
-#         else:
-#             form = DocumentForm()
-#             # return render(request, 'upload.html', {'form': form})
-#         documents = Document.objects.filter(user=request.user)
-#         return render(request, 'upload.html', {'documents': documents, 'form': form})
-
 
 def experiment(request):
       if request.user.is_authenticated:
@@ -126,43 +71,98 @@ def experiment(request):
 #     print(filename)
 #     request.session['filename'] = filename
 #     return redirect('home')
+
 my_dict = {'StandardScaler': StandardScaler(), 'MinMaxScaler': MinMaxScaler()}
 
 def transformer(request):
     if request.user.is_authenticated:
+        return render(request, 'transformer.html', {})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+
+def std(request):
+    if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
-            print(column)
-            wb = op.load_workbook(request.session['filename'])
-            ws = wb.active
-            print(ws)
-            df = pd.DataFrame(ws.values)
-            print(df)
-            request.session['my_pipeline'] = list()
-            # request.session['my_pipeline'].append(('std',StandardScaler(),[int(column)]))
+            if 'my_pipeline' not in request.session:
+                request.session['my_pipeline'] = ['StandardScaler', int(column)]
+                print('just have created pipeline')
+            else:
+                pipe = request.session['my_pipeline']
+                pipe.append(['StandardScaler', int(column)])
+                request.session['my_pipeline'] = pipe
 
-            request.session['my_pipeline'].append(['std','StandardScaler',[int(column)]])
-            request.session['my_pipeline'].append(['minmax','MinMaxScaler',[int(column)]])
-            pipe = request.session['my_pipeline']
-            print(f'Pipe: {pipe}')
-            print('StandardScaler' in pipe[0])
-            if 'StandardScaler' in pipe[0]:
-                n_index = pipe[0].index('StandardScaler')
-                print(f'n_index: {n_index}')
-                std = my_dict["StandardScaler"]
-                print(f'std: {std}')
-                pipe[0][n_index] = my_dict['StandardScaler']
-                # print(pipe)
-                # pass
-            # ct = ColumnTransformer()
-            # here temporary - finally in execute view
-            # ct.fit(df)
-            # res_ct=ct.transform(df)
-            # print(res_ct)
+                print(f'pipe exists: {pipe}')
+                print(f'pipeline in session {request.session["my_pipeline"]}')
+            return redirect('transformer')
 
-        else:
-            pass
-        return render(request, 'transformer.html', {})
+        return render(request, 'std.html', {})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def minmax(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            column = request.POST['choosen_column']
+            if 'my_pipeline' not in request.session:
+                request.session['my_pipeline'] = ['MinMaxScaler', int(column)]
+                print('no pipeline')
+            else:
+                pipe = request.session['my_pipeline']
+                pipe.append(['MinMaxScaler', int(column)])
+                request.session['my_pipeline'] = pipe
+
+                print(f'pipe exists: {pipe}')
+                print(f'pipeline in session {request.session["my_pipeline"]}')
+            return redirect('transformer')
+            
+
+        return render(request, 'minmax.html', {})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def norm(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            norm_type = request.POST['norm_type']
+            column = request.POST['choosen_column']
+            if 'my_pipeline' not in request.session:
+                request.session['my_pipeline'] = ['Normalizer', norm_type, int(column)]
+                print('no pipeline')
+            else:
+                pipe = request.session['my_pipeline']
+                pipe.append(['Normalizer', norm_type, int(column)])
+                request.session['my_pipeline'] = pipe
+
+                print(f'pipe exists: {pipe}')
+                print(f'pipeline in session {request.session["my_pipeline"]}')
+            return redirect('transformer')
+            
+        return render(request, 'norm.html', {})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def pca(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            parameter_n = request.POST['parameter_n']
+            if 'my_pipeline' not in request.session:
+                request.session['my_pipeline'] = ['PCA', int(parameter_n)]
+                print('no pipeline')
+            else:
+                pipe = request.session['my_pipeline']
+                pipe.append(['PCA', int(parameter_n)])
+                request.session['my_pipeline'] = pipe
+
+                print(f'pipe exists: {pipe}')
+                print(f'pipeline in session {request.session["my_pipeline"]}')
+            return redirect('transformer')
+            
+        return render(request, 'pca.html', {})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')

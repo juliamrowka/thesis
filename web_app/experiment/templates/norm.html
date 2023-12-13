@@ -1,0 +1,33 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+
+
+<div class="container-fluid p-3">
+    <div class="row flex-shrink-0 p-3">
+        <div class="col-5 mx-auto">
+            <h2>Normalizer</h2>
+            <hr>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime dignissimos consectetur veniam quo cum.</p>
+            <form method="POST" action="{% url 'norm' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <select class="form-select" name="norm_type" required>
+                        <option selected>Choose norm</option>
+                        <option value="l1">l1</option>
+                        <option value="l2">l2</option>
+                        <option value="max">max</option>
+                      </select>
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control" name="choosen_column" placeholder="Choose column" required>
+                </div>
+                <br />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

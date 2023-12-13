@@ -8,20 +8,12 @@
         <div class="col-5 mx-auto">
             <h1>Add transformation</h1>
             <br />
-            <p>StandardScaler</p>
-            <form method="POST" action="{% url 'transformer' %}">
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    <input type="number" class="form-control" name="choosen_column" placeholder="Choose column" required>
-                </div>
-                <div class="mb-3">
-                    <!-- <input type="password" class="form-control" name="password" placeholder="Password" required> -->
-                </div>
-                <br />
-                <button type="submit" class="btn btn-secondary">Submit</button>
-
-            </form>
+            <div class="row d-grid gap-3">
+                <a class="btn btn-outline-secondary" href="{% url 'std' %}" role="button">StandardScaler</a>
+                <a class="btn btn-outline-secondary" href="{% url 'minmax' %}" role="button">MinMaxScaler</a>
+                <a class="btn btn-outline-secondary" href="{% url 'norm' %}" role="button">Normalizer</a>
+                <a class="btn btn-outline-secondary" href="{% url 'pca' %}" role="button">PCA</a>
+            </div>
         </div>
     </div>
 </div>
