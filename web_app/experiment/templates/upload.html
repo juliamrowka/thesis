@@ -17,7 +17,7 @@
         <td><a href="{% url 'file' document.id %}">{{ document.document.name }}</a> </td>
         <td>{{ document.description }}</td>
         <td>{{ document.uploaded_at }}</td>
-        <td><a href="delete/{{ document.document.name }}"> Delete</a></td>
+        <td><a href="{% url 'delete' document.id %}"> Delete</a></td>
       </tr>
       {% endfor %}
     </tbody>

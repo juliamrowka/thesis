@@ -6,7 +6,8 @@ from . import forms
 urlpatterns = [
     path('', views.experiment, name='experiment'),
     path('upload/', views.model_form_upload, name='upload'),
-    path('file/<int:pk>', views.choosen_file, name='file'),
+    path('file/<int:pk>', views.choose_file, name='file'),
+    path('delete/<int:pk>', views.delete_file, name='delete'),
     path('transformer/', views.transformer, name='transformer'),
     path('transformer/std', views.std, name='std'),
     path('transformer/minmax', views.minmax, name='minmax'),

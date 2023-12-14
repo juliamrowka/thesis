@@ -5,6 +5,7 @@ from django.contrib import messages
 from .forms import DocumentForm
 from .models import Document
 import openpyxl as op
+import os
 # from io import BytesIO
 import pandas as pd
 from sklearn import preprocessing
@@ -30,7 +31,6 @@ def model_form_upload(request):
                 newdoc.save()
                 messages.success(request, "You have successfully uploaded file!")
                 request.session['filename'] = filename
-                
                 return redirect('experiment')
             elif files.count() > 0:
                 messages.success(request, "A file with that name already exists.")
@@ -43,21 +43,40 @@ def model_form_upload(request):
         messages.success(request, "You need to log in first")
         return redirect('home')
     
-def choosen_file(request, pk):
+def choose_file(request, pk):
     if request.user.is_authenticated:
         choosen_file = Document.objects.get(id=pk)
         filename = choosen_file.document
-        messages.success(request, "You have successfully chose file!")
+        messages.success(request, "You have successfully chosen file!")
         request.session['filename'] = str(filename)
         print(filename)
-        return redirect('upload')
+        return redirect('experiment')
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def delete_file(request, pk):
+    if request.user.is_authenticated:
+        to_delete = get_object_or_404(Document, pk=pk)
+        print(f'File to delete: {to_delete}')
+        filename = str(to_delete.document)
+        print(f'Path of file to delete: {filename}')
+        if to_delete and filename:
+            to_delete.delete()
+            os.remove(filename)
+            print('file removed')
+            messages.success(request, "You have successfully removed file!")
+        if filename == request.session['filename']:
+            request.session['filename'] = ''
+            print('session filename')
+        return redirect('experiment')
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
 
 def experiment(request):
       if request.user.is_authenticated:
-        if 'filename' in request.session:
+        if len('filename') in request.session > 0:
             excel_name = str(request.session['filename'])
             excel_data = list()
             wb = op.load_workbook(request.session['filename'])
@@ -72,17 +91,10 @@ def experiment(request):
                 excel_data.append(row_data)
             return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name})
         else:
-            messages.success(request, "You need to choose or upload a file first")
-            return redirect('upload') 
+            return render(request, 'experiment.html', {})
       else:
         messages.success(request, "You need to log in first")
         return redirect('home')
-      
-# def choose_file(request, file_id):
-#     filename = get_object_or_404(Document, pk=file_id)
-#     print(filename)
-#     request.session['filename'] = filename
-#     return redirect('home')
 
 my_dict = {'StandardScaler': StandardScaler(), 'MinMaxScaler': MinMaxScaler()}
 
