@@ -36,7 +36,7 @@
     {% if excel_data %}
     <div class="row">
         <p>Źródło danych: <strong>{{ excel_name }}</strong></p>
-        <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 300px;">
+        <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 200px;">
             <table class="table">
                 {% for row in excel_data %}
                 <tr>
@@ -48,6 +48,25 @@
             </table>
         </div>
     </div>
+    <br/>
+    {% endif %}
+
+    {% if my_pipeline %}
+    {% for list in my_pipeline %}
+    <div class="card">
+        <div class="card-header">
+            {{list.0}}
+        </div>
+        <div class="card-body">
+            {{list.1}}
+
+            <!-- {% for i in list %}
+            <p class="card-text">{{i}}</p>
+            {% endfor %} -->
+        </div>
+    </div>
+    <br/>
+    {% endfor %}
     {% endif %}
 
     <!-- <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">

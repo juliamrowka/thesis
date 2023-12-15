@@ -44,18 +44,25 @@ def model_form_upload(request):
         return redirect('home')
     
 def choose_file(request, pk):
+    """
+    description
+    """
     if request.user.is_authenticated:
         choosen_file = Document.objects.get(id=pk)
         filename = choosen_file.document
         messages.success(request, "You have successfully chosen file!")
         request.session['filename'] = str(filename)
-        print(filename)
+        request.session['my_pipeline'] = []
+        # print(filename)
         return redirect('experiment')
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
     
 def delete_file(request, pk):
+    """
+    description
+    """
     if request.user.is_authenticated:
         to_delete = get_object_or_404(Document, pk=pk)
         print(f'File to delete: {to_delete}')
@@ -68,6 +75,8 @@ def delete_file(request, pk):
             messages.success(request, "You have successfully removed file!")
         if filename == request.session['filename']:
             request.session['filename'] = ''
+            request.session['max_column'] = ''
+            request.session['my_pipeline'] = []
             print('session filename')
         return redirect('experiment')
     else:
@@ -75,30 +84,39 @@ def delete_file(request, pk):
         return redirect('home')
 
 def experiment(request):
-      if request.user.is_authenticated:
-        if len('filename') in request.session > 0:
-            excel_name = str(request.session['filename'])
-            excel_data = list()
-            wb = op.load_workbook(request.session['filename'])
-            worksheet = wb.active
-            print(worksheet)
-            # iterating over the rows and
-            # getting value from each cell in row
-            for row in worksheet.iter_rows():
-                row_data = list()
-                for cell in row:
-                    row_data.append(str(cell.value))
-                excel_data.append(row_data)
-            return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name})
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        if 'filename' in request.session:
+            if len(request.session['filename']) > 0:
+                excel_name = str(request.session['filename'])
+                excel_data = list()
+                wb = op.load_workbook(request.session['filename'])
+                worksheet = wb.active
+                request.session['max_column'] = list(range(1,worksheet.max_column + 1))
+                for row in worksheet.iter_rows():
+                    row_data = list()
+                    for cell in row:
+                        row_data.append(str(cell.value))
+                    excel_data.append(row_data)
+                if 'my_pipeline' in request.session:
+                    my_pipeline = request.session['my_pipeline']
+                    return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name, 'my_pipeline': my_pipeline})
+                else:
+                    return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name})
+            else:
+                return render(request, 'experiment.html', {})
         else:
             return render(request, 'experiment.html', {})
-      else:
+    else:
         messages.success(request, "You need to log in first")
         return redirect('home')
 
-my_dict = {'StandardScaler': StandardScaler(), 'MinMaxScaler': MinMaxScaler()}
-
 def transformer(request):
+    """
+    description
+    """
     if request.user.is_authenticated:
         return render(request, 'transformer.html', {})
     else:
@@ -106,11 +124,14 @@ def transformer(request):
         return redirect('home')
 
 def std(request):
+    """
+    description
+    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = ['StandardScaler', int(column)]
+                request.session['my_pipeline'] = [['StandardScaler', int(column)]]
                 print('just have created pipeline')
             else:
                 pipe = request.session['my_pipeline']
@@ -120,18 +141,23 @@ def std(request):
                 print(f'pipe exists: {pipe}')
                 print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
-
-        return render(request, 'std.html', {})
+        else:
+            max_column = request.session['max_column']
+            print(type(max_column))
+            return render(request, 'std.html', {'max_column': max_column})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
     
 def minmax(request):
+    """
+    description
+    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = ['MinMaxScaler', int(column)]
+                request.session['my_pipeline'] = [['MinMaxScaler', int(column)]]
                 print('no pipeline')
             else:
                 pipe = request.session['my_pipeline']
@@ -141,20 +167,24 @@ def minmax(request):
                 print(f'pipe exists: {pipe}')
                 print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
-            
-
-        return render(request, 'minmax.html', {})
+        else:
+            max_column = request.session['max_column']
+            print(type(max_column))
+            return render(request, 'minmax.html', {'max_column': max_column})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
     
 def norm(request):
+    """
+    description
+    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             norm_type = request.POST['norm_type']
             column = request.POST['choosen_column']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = ['Normalizer', norm_type, int(column)]
+                request.session['my_pipeline'] = [['Normalizer', norm_type, int(column)]]
                 print('no pipeline')
             else:
                 pipe = request.session['my_pipeline']
@@ -164,18 +194,23 @@ def norm(request):
                 print(f'pipe exists: {pipe}')
                 print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
-            
-        return render(request, 'norm.html', {})
+        else:
+            max_column = request.session['max_column']
+            print(type(max_column))
+            return render(request, 'norm.html', {'max_column': max_column})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
     
 def pca(request):
+    """
+    description
+    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             parameter_n = request.POST['parameter_n']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = ['PCA', int(parameter_n)]
+                request.session['my_pipeline'] = [['PCA', int(parameter_n)]]
                 print('no pipeline')
             else:
                 pipe = request.session['my_pipeline']
@@ -185,8 +220,10 @@ def pca(request):
                 print(f'pipe exists: {pipe}')
                 print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
-            
-        return render(request, 'pca.html', {})
+        else:
+            n_component = request.session['max_column']
+            print(type(n_component))
+            return render(request, 'pca.html', {'n_component': n_component})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')

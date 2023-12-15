@@ -13,7 +13,12 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input type="number" class="form-control" name="choosen_column" placeholder="Choose column" required>
+                    <select class="form-select" name="choosen_column" required>
+                        <option selected>Choose column</option>
+                        {% for i in max_column %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <br />
                 <button type="submit" class="btn btn-secondary">Submit</button>

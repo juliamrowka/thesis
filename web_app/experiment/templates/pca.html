@@ -13,7 +13,12 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input type="number" class="form-control" name="parameter_n" placeholder="Choose parameter n" required>
+                    <select class="form-select" name="parameter_n" required>
+                        <option selected>Choose paramenter n</option>
+                        {% for i in n_component %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <br />
                 <button type="submit" class="btn btn-secondary">Submit</button>
