@@ -31,6 +31,7 @@ def model_form_upload(request):
                 newdoc.save()
                 messages.success(request, "You have successfully uploaded file!")
                 request.session['filename'] = filename
+                request.session['my_pipeline'] = []
                 return redirect('experiment')
             elif files.count() > 0:
                 messages.success(request, "A file with that name already exists.")
@@ -131,11 +132,11 @@ def std(request):
         if request.method == 'POST':
             column = request.POST['choosen_column']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['StandardScaler', int(column)]]
+                request.session['my_pipeline'] = [['StandardScaler', ('Chosen column: ', int(column))]]
                 print('just have created pipeline')
             else:
                 pipe = request.session['my_pipeline']
-                pipe.append(['StandardScaler', int(column)])
+                pipe.append([('Name', 'StandardScaler'), ('Chosen column: ', int(column))])
                 request.session['my_pipeline'] = pipe
 
                 print(f'pipe exists: {pipe}')
@@ -157,11 +158,11 @@ def minmax(request):
         if request.method == 'POST':
             column = request.POST['choosen_column']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['MinMaxScaler', int(column)]]
+                request.session['my_pipeline'] = [['MinMaxScaler', ('Chosen column: ', int(column))]]
                 print('no pipeline')
             else:
                 pipe = request.session['my_pipeline']
-                pipe.append(['MinMaxScaler', int(column)])
+                pipe.append(['MinMaxScaler', ('Chosen column: ', int(column))])
                 request.session['my_pipeline'] = pipe
 
                 print(f'pipe exists: {pipe}')
@@ -184,11 +185,11 @@ def norm(request):
             norm_type = request.POST['norm_type']
             column = request.POST['choosen_column']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['Normalizer', norm_type, int(column)]]
+                request.session['my_pipeline'] = [['Normalizer', ('Norm type: ', norm_type), ('Chosen column: ', int(column))]]
                 print('no pipeline')
             else:
                 pipe = request.session['my_pipeline']
-                pipe.append(['Normalizer', norm_type, int(column)])
+                pipe.append(['Normalizer', ('Norm type: ', norm_type), ('Chosen column: ', int(column))])
                 request.session['my_pipeline'] = pipe
 
                 print(f'pipe exists: {pipe}')
@@ -210,11 +211,11 @@ def pca(request):
         if request.method == 'POST':
             parameter_n = request.POST['parameter_n']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['PCA', int(parameter_n)]]
+                request.session['my_pipeline'] = [['PCA', ('Chosen n parameter: ', int(parameter_n))]]
                 print('no pipeline')
             else:
                 pipe = request.session['my_pipeline']
-                pipe.append(['PCA', int(parameter_n)])
+                pipe.append(['PCA', ('Chosen n parameter: ', int(parameter_n))])
                 request.session['my_pipeline'] = pipe
 
                 print(f'pipe exists: {pipe}')
