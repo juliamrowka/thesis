@@ -13,6 +13,16 @@ urlpatterns = [
     path('transformer/minmax', views.minmax, name='minmax'),
     path('transformer/norm', views.norm, name='norm'),
     path('transformer/pca', views.pca, name='pca'),
+    path('estimator', views.estimator, name='estimator'),
+    path('estimator/ordinary-least-squares', views.ord_least_squares, name='ordinary-least-squares'),
+    # path('estimator', views.estimator, name='estimator'),
+    # path('estimator', views.estimator, name='estimator'),
+    # path('estimator', views.estimator, name='estimator'),
+    # path('estimator', views.estimator, name='estimator'),
+    # path('estimator', views.estimator, name='estimator'),
+    # path('estimator', views.estimator, name='estimator'),
+    # path('estimator', views.estimator, name='estimator'),
+    # path('estimator', views.estimator, name='estimator'),
     # path('documents', views.choose_file, name='choose_file')
 
 ]

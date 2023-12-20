@@ -73,6 +73,23 @@
     {% endfor %}
     {% endif %}
 
+
+    {% if my_estimator %}
+    <div class="card">
+        <div class="card-header">
+            {{my_estimator.0}}
+        </div>
+        <div class="card-body">
+            {{my_estimator.1.0}}{{my_estimator.1.1}}
+            <br/>
+            {{my_estimator.2.0}}{{my_estimator.2.1}}
+            <br/>
+            {{my_estimator.3.0}}{{my_estimator.3.1}}
+        </div>
+    </div>
+    <br/>
+    {% endif %}
+
     <!-- <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
         <a href="{% url 'experiment' %}" class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
             <span class="fs-4">Steps</span>

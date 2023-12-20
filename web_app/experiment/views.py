@@ -1,20 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 # from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import DocumentForm
 from .models import Document
 import openpyxl as op
 import os
-# from io import BytesIO
 import pandas as pd
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.compose import ColumnTransformer
 import numpy as np
-import pickle
-# import joblib
-# Create your views here.
 
 def model_form_upload(request):
     """
@@ -103,7 +99,9 @@ def experiment(request):
                     excel_data.append(row_data)
                 if 'my_pipeline' in request.session:
                     my_pipeline = request.session['my_pipeline']
-                    return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name, 'my_pipeline': my_pipeline})
+                if 'my_estimator' in request.session:
+                    my_estimator = request.session['my_estimator']   
+                    return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name, 'my_pipeline': my_pipeline, 'my_estimator': my_estimator})
                 else:
                     return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name})
             else:
@@ -136,7 +134,7 @@ def std(request):
                 print('just have created pipeline')
             else:
                 pipe = request.session['my_pipeline']
-                pipe.append([('Name', 'StandardScaler'), ('Chosen column: ', int(column))])
+                pipe.append(['StandardScaler', ('Chosen column: ', int(column))])
                 request.session['my_pipeline'] = pipe
 
                 print(f'pipe exists: {pipe}')
@@ -225,6 +223,36 @@ def pca(request):
             n_component = request.session['max_column']
             print(type(n_component))
             return render(request, 'pca.html', {'n_component': n_component})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def estimator(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        return render(request, 'estimator.html', {})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def ord_least_squares(request):
+    """
+    description
+    """
+    # if request.user.is_authenticated:
+    #     return render(request, 'ordinary-least-squares.html', {})
+    # else:
+    #     messages.success(request, "You need to log in first")
+    #     return redirect('home')
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            intercept = request.POST['calculate_intercept']
+            request.session['my_estimator'] = ['LinearRegression', ('Calculate intercept: ', intercept)]
+            return redirect('estimator')
+        else:
+            return render(request, 'ordinary-least-squares.html', {})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
