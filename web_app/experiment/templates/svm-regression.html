@@ -1,0 +1,38 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+
+
+<div class="container-fluid p-3">
+    <div class="row flex-shrink-0 p-3">
+        <div class="col-5 mx-auto">
+            <h2>LinearSVR</h2>
+            <hr>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores
+                perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime
+                dignissimos consectetur veniam quo cum.</p>
+            <form method="POST" action="{% url 'svm-regression' %}">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <input class="form-control" type="number" step="any" placeholder="Tolarance" name="tolarance"></input>
+                    <br/>
+                    <select class="form-select" name="calculate_intercept" required>
+                        <option selected>Calculate intercept</option>
+                        <option value="True">True</option>
+                        <option value="False">False</option>
+                    </select>
+                    <br/>
+                    <input class="form-control" type="number" placeholder="Random state" name="random"></input>
+                    <br/>
+                    <input class="form-control" type="number" placeholder="Maximum number of iterations" name="iter_max"></input>
+                </div>
+                <br/>
+                <button type="submit" class="btn btn-secondary">Submit</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

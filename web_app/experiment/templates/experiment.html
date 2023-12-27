@@ -35,21 +35,36 @@
 
     {% if excel_data %}
     <div class="row">
-        <p>Źródło danych: <strong>{{ excel_name }}</strong></p>
-        <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 200px;">
-            <table class="table">
-                {% for row in excel_data %}
-                <tr>
-                    {% for cell in row %}
-                    <th scope="row">{{ cell }}</th>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </table>
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                        aria-controls="panelsStayOpen-collapseOne">
+                        <div>Źródło danych: <strong>{{ excel_name }}</strong></div>
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 200px;">
+                            <table class="table">
+                                {% for row in excel_data %}
+                                <tr>
+                                    {% for cell in row %}
+                                    <th scope="row">{{ cell }}</th>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <br/>
     {% endif %}
+
 
     {% if my_pipeline %}
     {% for list in my_pipeline %}
@@ -59,9 +74,9 @@
         </div>
         <div class="card-body">
             {{list.1.0}}{{list.1.1}}
-            <br/>
+            <br />
             {{list.2.0}}{{list.2.1}}
-            <br/>
+            <br />
             {{list.3.0}}{{list.3.1}}
 
             <!-- {% for i in list %}
@@ -69,7 +84,7 @@
             {% endfor %} -->
         </div>
     </div>
-    <br/>
+    <br />
     {% endfor %}
     {% endif %}
 
@@ -81,13 +96,15 @@
         </div>
         <div class="card-body">
             {{my_estimator.1.0}}{{my_estimator.1.1}}
-            <br/>
+            <br />
             {{my_estimator.2.0}}{{my_estimator.2.1}}
-            <br/>
+            <br />
             {{my_estimator.3.0}}{{my_estimator.3.1}}
+            <br />
+            {{my_estimator.4.0}}{{my_estimator.4.1}}
         </div>
     </div>
-    <br/>
+    <br />
     {% endif %}
 
     <!-- <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">

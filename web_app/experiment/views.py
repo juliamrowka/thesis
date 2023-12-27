@@ -50,6 +50,7 @@ def choose_file(request, pk):
         messages.success(request, "You have successfully chosen file!")
         request.session['filename'] = str(filename)
         request.session['my_pipeline'] = []
+        request.session['my_estimator'] = []
         # print(filename)
         return redirect('experiment')
     else:
@@ -253,6 +254,63 @@ def ord_least_squares(request):
             return redirect('estimator')
         else:
             return render(request, 'ordinary-least-squares.html', {})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def svm_regression(request):
+    """
+    description
+    """
+    # if request.user.is_authenticated:
+    #     return render(request, 'ordinary-least-squares.html', {})
+    # else:
+    #     messages.success(request, "You need to log in first")
+    #     return redirect('home')
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            tolarance = request.POST['tolarance']
+            intercept = request.POST['calculate_intercept']
+            random = request.POST['random']
+            iter_max = request.POST['iter_max']
+            request.session['my_estimator'] = ['LinearRegression', ('Tolarance for stopping criteria: ', tolarance), ('Calculate intercept: ', intercept), ('Random state: ', random), ('Maximum number of iterations: ', iter_max)]
+            return redirect('estimator')
+        else:
+            return render(request, 'svm-regression.html', {})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def nn_regression(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            neighbors = request.POST['neighbors']
+            weight = request.POST['weight']
+            algorithm = request.POST['algorithm']
+            request.session['my_estimator'] = ['KNeighborsRegressor', ('Number of neighbors: ', neighbors), ('Weight function: ', weight), ('Algorithm: ', algorithm)]
+            return redirect('estimator')
+        else:
+            return render(request, 'nn-regression.html', {})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def dt_regression(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            neighbors = request.POST['neighbors']
+            weight = request.POST['weight']
+            algorithm = request.POST['algorithm']
+            request.session['my_estimator'] = ['KNeighborsRegressor', ('Number of neighbors: ', neighbors), ('Weight function: ', weight), ('Algorithm: ', algorithm)]
+            return redirect('estimator')
+        else:
+            return render(request, 'dt_regression.html', {})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
