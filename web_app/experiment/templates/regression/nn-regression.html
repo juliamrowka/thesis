@@ -17,19 +17,20 @@
                 <div class="mb-3">
                     <input class="form-control" type="number" placeholder="N Neighbors" name="neighbors"></input>
                     <br/>
-                    <select class="form-select" name="weight" required>
+                    <select class="form-select" name="choosen_column" required>
+                        <option selected>Choose column of target values</option>
+                        {% for i in max_column %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <!-- <br/> -->
+                    <!-- <select class="form-select" name="weight" required>
                         <option selected>Weight function</option>
                         <option value="uniform">Uniform</option>
                         <option value="distance">Distance</option>
                     </select>
                     <br/>
-                    <select class="form-select" name="algorithm" required>
-                        <option selected>Algorithm</option>
-                        <option value="ball_tree">BallTree</option>
-                        <option value="kd_tree">KDTree</option>
-                        <option value="brute">Brute-Force Search</option>
-                        <option value="auto">Auto</option>
-                    </select>
+                    <input class="form-control" type="number" placeholder="P parameter" name="p_parameter"></input> -->
                 </div>
                 <br/>
                 <button type="submit" class="btn btn-secondary">Submit</button>

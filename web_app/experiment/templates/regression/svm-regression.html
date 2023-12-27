@@ -15,9 +15,19 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input class="form-control" type="number" step="any" placeholder="Tolarance" name="tolarance"></input>
+                    <input class="form-control" type="number" step="any" placeholder="Epsilon" name="epsilon"></input>
                     <br/>
-                    <select class="form-select" name="calculate_intercept" required>
+                    <input class="form-control" type="number" step="any" placeholder="Regularization parameter C" name="C_parameter"></input>
+                    <br/>
+                    <input class="form-control" type="number" step="any" placeholder="Intercept scaling" name="intercept_scaling"></input>
+                    <br/>
+                    <select class="form-select" name="choosen_column" required>
+                        <option selected>Choose column of target values</option>
+                        {% for i in max_column %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <!-- <select class="form-select" name="calculate_intercept" required>
                         <option selected>Calculate intercept</option>
                         <option value="True">True</option>
                         <option value="False">False</option>
@@ -25,7 +35,7 @@
                     <br/>
                     <input class="form-control" type="number" placeholder="Random state" name="random"></input>
                     <br/>
-                    <input class="form-control" type="number" placeholder="Maximum number of iterations" name="iter_max"></input>
+                    <input class="form-control" type="number" placeholder="Maximum number of iterations" name="iter_max"></input> -->
                 </div>
                 <br/>
                 <button type="submit" class="btn btn-secondary">Submit</button>

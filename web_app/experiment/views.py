@@ -132,19 +132,19 @@ def std(request):
             column = request.POST['choosen_column']
             if 'my_pipeline' not in request.session:
                 request.session['my_pipeline'] = [['StandardScaler', ('Chosen column: ', int(column))]]
-                print('just have created pipeline')
+                # print('just have created pipeline')
             else:
                 pipe = request.session['my_pipeline']
                 pipe.append(['StandardScaler', ('Chosen column: ', int(column))])
                 request.session['my_pipeline'] = pipe
 
-                print(f'pipe exists: {pipe}')
-                print(f'pipeline in session {request.session["my_pipeline"]}')
+                # print(f'pipe exists: {pipe}')
+                # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
         else:
             max_column = request.session['max_column']
-            print(type(max_column))
-            return render(request, 'std.html', {'max_column': max_column})
+            # print(type(max_column))
+            return render(request, 'preprocessing/std.html', {'max_column': max_column})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -158,19 +158,19 @@ def minmax(request):
             column = request.POST['choosen_column']
             if 'my_pipeline' not in request.session:
                 request.session['my_pipeline'] = [['MinMaxScaler', ('Chosen column: ', int(column))]]
-                print('no pipeline')
+                # print('no pipeline')
             else:
                 pipe = request.session['my_pipeline']
                 pipe.append(['MinMaxScaler', ('Chosen column: ', int(column))])
                 request.session['my_pipeline'] = pipe
 
-                print(f'pipe exists: {pipe}')
-                print(f'pipeline in session {request.session["my_pipeline"]}')
+                # print(f'pipe exists: {pipe}')
+                # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
         else:
             max_column = request.session['max_column']
-            print(type(max_column))
-            return render(request, 'minmax.html', {'max_column': max_column})
+            # print(type(max_column))
+            return render(request, 'preprocessing/minmax.html', {'max_column': max_column})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -182,22 +182,21 @@ def norm(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             norm_type = request.POST['norm_type']
-            column = request.POST['choosen_column']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['Normalizer', ('Norm type: ', norm_type), ('Chosen column: ', int(column))]]
-                print('no pipeline')
+                request.session['my_pipeline'] = [['Normalizer', ('Norm type: ', norm_type)]]
+                # print('no pipeline')
             else:
                 pipe = request.session['my_pipeline']
-                pipe.append(['Normalizer', ('Norm type: ', norm_type), ('Chosen column: ', int(column))])
+                pipe.append(['Normalizer', ('Norm type: ', norm_type)])
                 request.session['my_pipeline'] = pipe
 
-                print(f'pipe exists: {pipe}')
-                print(f'pipeline in session {request.session["my_pipeline"]}')
+                # print(f'pipe exists: {pipe}')
+                # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
         else:
             max_column = request.session['max_column']
-            print(type(max_column))
-            return render(request, 'norm.html', {'max_column': max_column})
+            # print(type(max_column))
+            return render(request, 'preprocessing/norm.html', {'max_column': max_column})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -211,19 +210,19 @@ def pca(request):
             parameter_n = request.POST['parameter_n']
             if 'my_pipeline' not in request.session:
                 request.session['my_pipeline'] = [['PCA', ('Chosen n parameter: ', int(parameter_n))]]
-                print('no pipeline')
+                # print('no pipeline')
             else:
                 pipe = request.session['my_pipeline']
                 pipe.append(['PCA', ('Chosen n parameter: ', int(parameter_n))])
                 request.session['my_pipeline'] = pipe
 
-                print(f'pipe exists: {pipe}')
-                print(f'pipeline in session {request.session["my_pipeline"]}')
+                # print(f'pipe exists: {pipe}')
+                # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
         else:
             n_component = request.session['max_column']
-            print(type(n_component))
-            return render(request, 'pca.html', {'n_component': n_component})
+            # print(type(n_component))
+            return render(request, 'preprocessing/pca.html', {'n_component': n_component})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -249,11 +248,11 @@ def ord_least_squares(request):
     #     return redirect('home')
     if request.user.is_authenticated:
         if request.method == 'POST':
-            intercept = request.POST['calculate_intercept']
-            request.session['my_estimator'] = ['LinearRegression', ('Calculate intercept: ', intercept)]
-            return redirect('estimator')
+            column = request.POST['choosen_column']
+            request.session['my_estimator'] = ['LinearRegression', ('Target values: ', int(column))]
+            return redirect('experiment')
         else:
-            return render(request, 'ordinary-least-squares.html', {})
+            return render(request, 'regression/ordinary-least-squares.html', {'max_column': request.session['max_column']})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -262,21 +261,16 @@ def svm_regression(request):
     """
     description
     """
-    # if request.user.is_authenticated:
-    #     return render(request, 'ordinary-least-squares.html', {})
-    # else:
-    #     messages.success(request, "You need to log in first")
-    #     return redirect('home')
     if request.user.is_authenticated:
         if request.method == 'POST':
-            tolarance = request.POST['tolarance']
-            intercept = request.POST['calculate_intercept']
-            random = request.POST['random']
-            iter_max = request.POST['iter_max']
-            request.session['my_estimator'] = ['LinearRegression', ('Tolarance for stopping criteria: ', tolarance), ('Calculate intercept: ', intercept), ('Random state: ', random), ('Maximum number of iterations: ', iter_max)]
-            return redirect('estimator')
+            epsilon = request.POST['epsilon']
+            C_parameter = request.POST['C_parameter']
+            intercept_scaling = request.POST['intercept_scaling']
+            column = request.POST['choosen_column']
+            request.session['my_estimator'] = ['LinearRegression', ('Epsilon: ', epsilon), ('Regularization parameter C: ', C_parameter), ('Intercept scaling: ', intercept_scaling), ('Target values: ', int(column))]
+            return redirect('experiment')
         else:
-            return render(request, 'svm-regression.html', {})
+            return render(request, 'regression/svm-regression.html', {'max_column': request.session['max_column']})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -288,12 +282,13 @@ def nn_regression(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             neighbors = request.POST['neighbors']
-            weight = request.POST['weight']
-            algorithm = request.POST['algorithm']
-            request.session['my_estimator'] = ['KNeighborsRegressor', ('Number of neighbors: ', neighbors), ('Weight function: ', weight), ('Algorithm: ', algorithm)]
-            return redirect('estimator')
+            # weight = request.POST['weight']
+            # p_parameter = request.POST['p_parameter']
+            column = request.POST['choosen_column']
+            request.session['my_estimator'] = ['KNeighborsRegressor', ('Number of neighbors: ', neighbors), ('Target values: ', int(column))]
+            return redirect('experiment')
         else:
-            return render(request, 'nn-regression.html', {})
+            return render(request, 'regression/nn-regression.html', {'max_column': request.session['max_column']})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -304,13 +299,13 @@ def dt_regression(request):
     """
     if request.user.is_authenticated:
         if request.method == 'POST':
-            neighbors = request.POST['neighbors']
-            weight = request.POST['weight']
-            algorithm = request.POST['algorithm']
-            request.session['my_estimator'] = ['KNeighborsRegressor', ('Number of neighbors: ', neighbors), ('Weight function: ', weight), ('Algorithm: ', algorithm)]
-            return redirect('estimator')
+            criterion = request.POST['criterion']
+            max_leaf_nodes = request.POST['max_leaf_nodes']
+            column = request.POST['choosen_column']
+            request.session['my_estimator'] = ['DecisionTreeRegressor', ('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Target values: ', int(column))]
+            return redirect('experiment')
         else:
-            return render(request, 'dt_regression.html', {})
+            return render(request, 'regression/dt_regression.html', {'max_column': request.session['max_column']})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
