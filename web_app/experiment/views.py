@@ -316,6 +316,57 @@ def dt_regression(request):
         messages.success(request, "You need to log in first")
         return redirect('home')
     
+def categorical_nb(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            alpha = request.POST['alpha']
+            column = request.POST['choosen_column']
+            request.session['my_estimator'] = ['CategoricalNB', ('Alpha: ', alpha), ('Column of target values: ', int(column))]
+            return redirect('experiment')
+        else:
+            return render(request, 'classification/categorical_nb.html', {'max_column': request.session['max_column']})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def svm_classification(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            c_parameter = request.POST['c_parameter']
+            class_weight = request.POST['class_weight']
+            column = request.POST['choosen_column']
+            request.session['my_estimator'] = ['LinearSVC', ('C parameter: ', c_parameter), ('Class weight: ', class_weight), ('Column of target values: ', int(column))]
+            return redirect('experiment')
+        else:
+            return render(request, 'classification/svm_classification.html', {'max_column': request.session['max_column']})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def nn_classification(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            neighbors = request.POST['neighbors']
+            # weight = request.POST['weight']
+            # p_parameter = request.POST['p_parameter']
+            column = request.POST['choosen_column']
+            request.session['my_estimator'] = ['KNeighborsClassifier', ('Number of neighbors: ', neighbors), ('Column of target values: ', int(column))]
+            return redirect('experiment')
+        else:
+            return render(request, 'classification/nn-classification.html', {'max_column': request.session['max_column']})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+
 def dt_classification(request):
     """
     description
@@ -333,6 +384,7 @@ def dt_classification(request):
         messages.success(request, "You need to log in first")
         return redirect('home')
     
+
 def compute(request):
     """
     description

@@ -39,9 +39,9 @@
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <div class="row d-grid gap-3">
-                                <a class="btn btn-outline-secondary" href="#" role="button">Gaussian Naive Bayes</a>
-                                <a class="btn btn-outline-secondary" href="#" role="button">SVM Classification</a>
-                                <a class="btn btn-outline-secondary" href="#" role="button">Nearest Neighbors Classification</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'categorical-naive-bayes' %}" role="button">Categorical Naive Bayes</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'svm-classification' %}" role="button">SVM Classification</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'nearest-neighbors-classification' %}" role="button">Nearest Neighbors Classification</a>
                                 <a class="btn btn-outline-secondary" href="{% url 'decision-tree-classification' %}" role="button">Decision Tree Classification</a>
                             </div>
                         </div>
