@@ -8,8 +8,14 @@ import openpyxl as op
 import os
 import pandas as pd
 from sklearn import preprocessing
+from sklearn import datasets
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.decomposition import PCA
 from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score
 import numpy as np
 
 def model_form_upload(request):
@@ -249,7 +255,7 @@ def ord_least_squares(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['LinearRegression', ('Target values: ', int(column))]
+            request.session['my_estimator'] = ['LinearRegression', ('Column of target values: ', int(column))]
             return redirect('experiment')
         else:
             return render(request, 'regression/ordinary-least-squares.html', {'max_column': request.session['max_column']})
@@ -267,7 +273,7 @@ def svm_regression(request):
             C_parameter = request.POST['C_parameter']
             intercept_scaling = request.POST['intercept_scaling']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['LinearRegression', ('Epsilon: ', epsilon), ('Regularization parameter C: ', C_parameter), ('Intercept scaling: ', intercept_scaling), ('Target values: ', int(column))]
+            request.session['my_estimator'] = ['LinearRegression', ('Epsilon: ', epsilon), ('Regularization parameter C: ', C_parameter), ('Intercept scaling: ', intercept_scaling), ('Column of target values: ', int(column))]
             return redirect('experiment')
         else:
             return render(request, 'regression/svm-regression.html', {'max_column': request.session['max_column']})
@@ -285,7 +291,7 @@ def nn_regression(request):
             # weight = request.POST['weight']
             # p_parameter = request.POST['p_parameter']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['KNeighborsRegressor', ('Number of neighbors: ', neighbors), ('Target values: ', int(column))]
+            request.session['my_estimator'] = ['KNeighborsRegressor', ('Number of neighbors: ', neighbors), ('Column of target values: ', int(column))]
             return redirect('experiment')
         else:
             return render(request, 'regression/nn-regression.html', {'max_column': request.session['max_column']})
@@ -302,10 +308,67 @@ def dt_regression(request):
             criterion = request.POST['criterion']
             max_leaf_nodes = request.POST['max_leaf_nodes']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['DecisionTreeRegressor', ('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Target values: ', int(column))]
+            request.session['my_estimator'] = ['DecisionTreeRegressor', ('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Column of target values: ', int(column))]
             return redirect('experiment')
         else:
             return render(request, 'regression/dt_regression.html', {'max_column': request.session['max_column']})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def dt_classification(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            criterion = request.POST['criterion']
+            max_leaf_nodes = request.POST['max_leaf_nodes']
+            column = request.POST['choosen_column']
+            request.session['my_estimator'] = ['DecisionTreeClassifier', ('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Column of target values: ', int(column))]
+            return redirect('experiment')
+        else:
+            return render(request, 'classification/dt_classification.html', {'max_column': request.session['max_column']})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def compute(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        # header_column = 0
+        # cols = "A:B"
+        wb = pd.read_excel(io=request.session['filename'], header=0)
+        print(wb)
+        # print(type(wb))
+        ct= ColumnTransformer([('std',StandardScaler(),[0]), ('std2',StandardScaler(),[1])], remainder="passthrough")
+        ct.fit(wb)
+        res_ct=ct.transform(wb)
+        print(res_ct)
+        # print(wb.iloc[:, 0])
+        # print(wb.iloc[:, 1:4])
+
+        # print(request.session['my_estimator'][len(request.session['my_estimator'])-1][1])
+        target_column = request.session['my_estimator'][len(request.session['my_estimator'])-1][1] - 1
+        # print(target_column)
+        # # target = wb.iloc[:, target_column-1]
+        # print(type(request.session['my_estimator']))
+
+        X_train,X_test,y_train,y_test=train_test_split(wb.iloc[:,[x for x in range(len(wb.columns)) if x!=target_column]], wb.iloc[:, target_column],test_size=0.2,random_state=0)
+        # X_train,X_test,y_train,y_test=train_test_split(wb.iloc[:, 1:4],wb.iloc[:, 0],test_size=0.2,random_state=0)
+        # iris = datasets.load_iris()
+        # X_train,X_test,y_train,y_test=train_test_split(iris.data,iris.target,test_size=0.2,random_state=0)
+        pipe4=Pipeline([('pca', PCA(n_components=2)),('tree', DecisionTreeClassifier())])
+
+        pipe4.fit(X_train,y_train)
+        res=pipe4.predict(X_train)
+        print(np.transpose(np.array([y_train,res])))
+        print(pipe4.score(X_test,y_test))
+        scores=cross_val_score(pipe4,X_train,y_train,cv=10)
+        print(f"Średnia {scores.mean()}, odchylenie standardowe {scores.std()}")
+        return render(request, 'compute.html', {})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')

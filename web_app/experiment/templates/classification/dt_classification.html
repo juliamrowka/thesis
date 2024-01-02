@@ -1,0 +1,43 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+
+
+<div class="container-fluid p-3">
+    <div class="row flex-shrink-0 p-3">
+        <div class="col-5 mx-auto">
+            <h2>DecisionTreeClassifier</h2>
+            <hr>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores
+                perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime
+                dignissimos consectetur veniam quo cum.</p>
+            <form method="POST" action="{% url 'decision-tree-classification' %}">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <select class="form-select" name="criterion" required>
+                        <option selected>Criterion</option>
+                        <option value="squared_error">Squared error</option>
+                        <option value="friedman_mse">Friedman mse</option>
+                        <option value="absolute_error">Absolute error</option>
+                        <option value="poisson">Poisson</option>
+                    </select>
+                    <br/>
+                    <input class="form-control" type="number" placeholder="Max leaf nodes" name="max_leaf_nodes"></input>
+                    <br/>
+                    <select class="form-select" name="choosen_column" required>
+                        <option selected>Choose column of target values</option>
+                        {% for i in max_column %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <br/>
+                <button type="submit" class="btn btn-secondary">Submit</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

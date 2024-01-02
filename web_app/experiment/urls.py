@@ -21,8 +21,8 @@ urlpatterns = [
     # path('estimator', views.estimator, name='estimator'),
     # path('estimator', views.estimator, name='estimator'),
     # path('estimator', views.estimator, name='estimator'),
-    # path('estimator', views.estimator, name='estimator'),
-    # path('estimator', views.estimator, name='estimator'),
+    path('estimator/decision-tree-classification', views.dt_classification, name='decision-tree-classification'),
+    path('compute', views.compute, name='compute'),
     # path('documents', views.choose_file, name='choose_file')
 
 ]
