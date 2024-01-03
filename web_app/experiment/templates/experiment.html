@@ -74,11 +74,6 @@
         </div>
         <div class="card-body">
             {{list.1.0}}{{list.1.1}}
-            <br />
-            {{list.2.0}}{{list.2.1}}
-            <br />
-            {{list.3.0}}{{list.3.1}}
-
             <!-- {% for i in list %}
             <p class="card-text">{{i}}</p>
             {% endfor %} -->
@@ -95,13 +90,10 @@
             {{my_estimator.0}}
         </div>
         <div class="card-body">
-            {{my_estimator.1.0}}{{my_estimator.1.1}}
-            <br />
-            {{my_estimator.2.0}}{{my_estimator.2.1}}
-            <br />
-            {{my_estimator.3.0}}{{my_estimator.3.1}}
-            <br />
-            {{my_estimator.4.0}}{{my_estimator.4.1}}
+            {% for list in my_estimator.1 %}
+            {{list.0}}{{list.1}}
+            <br/>
+            {% endfor %}
         </div>
     </div>
     <br />

@@ -255,7 +255,7 @@ def ord_least_squares(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['LinearRegression', ('Column of target values: ', int(column))]
+            request.session['my_estimator'] = ['LinearRegression', [('Column of target values: ', int(column))]]
             return redirect('experiment')
         else:
             return render(request, 'regression/ordinary-least-squares.html', {'max_column': request.session['max_column']})
@@ -273,7 +273,7 @@ def svm_regression(request):
             C_parameter = request.POST['C_parameter']
             intercept_scaling = request.POST['intercept_scaling']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['LinearRegression', ('Epsilon: ', epsilon), ('Regularization parameter C: ', C_parameter), ('Intercept scaling: ', intercept_scaling), ('Column of target values: ', int(column))]
+            request.session['my_estimator'] = ['LinearSVR', [('Epsilon: ', epsilon), ('Regularization parameter C: ', C_parameter), ('Intercept scaling: ', intercept_scaling), ('Column of target values: ', int(column))]]
             return redirect('experiment')
         else:
             return render(request, 'regression/svm-regression.html', {'max_column': request.session['max_column']})
@@ -291,7 +291,7 @@ def nn_regression(request):
             # weight = request.POST['weight']
             # p_parameter = request.POST['p_parameter']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['KNeighborsRegressor', ('Number of neighbors: ', neighbors), ('Column of target values: ', int(column))]
+            request.session['my_estimator'] = ['KNeighborsRegressor', [('Number of neighbors: ', neighbors), ('Column of target values: ', int(column))]]
             return redirect('experiment')
         else:
             return render(request, 'regression/nn-regression.html', {'max_column': request.session['max_column']})
@@ -308,7 +308,7 @@ def dt_regression(request):
             criterion = request.POST['criterion']
             max_leaf_nodes = request.POST['max_leaf_nodes']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['DecisionTreeRegressor', ('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Column of target values: ', int(column))]
+            request.session['my_estimator'] = ['DecisionTreeRegressor', [('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Column of target values: ', int(column))]]
             return redirect('experiment')
         else:
             return render(request, 'regression/dt_regression.html', {'max_column': request.session['max_column']})
@@ -324,7 +324,7 @@ def categorical_nb(request):
         if request.method == 'POST':
             alpha = request.POST['alpha']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['CategoricalNB', ('Alpha: ', alpha), ('Column of target values: ', int(column))]
+            request.session['my_estimator'] = ['CategoricalNB', [('Alpha: ', alpha), ('Column of target values: ', int(column))]]
             return redirect('experiment')
         else:
             return render(request, 'classification/categorical_nb.html', {'max_column': request.session['max_column']})
@@ -341,7 +341,7 @@ def svm_classification(request):
             c_parameter = request.POST['c_parameter']
             class_weight = request.POST['class_weight']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['LinearSVC', ('C parameter: ', c_parameter), ('Class weight: ', class_weight), ('Column of target values: ', int(column))]
+            request.session['my_estimator'] = ['LinearSVC', [('C parameter: ', c_parameter), ('Class weight: ', class_weight), ('Column of target values: ', int(column))]]
             return redirect('experiment')
         else:
             return render(request, 'classification/svm_classification.html', {'max_column': request.session['max_column']})
@@ -359,7 +359,7 @@ def nn_classification(request):
             # weight = request.POST['weight']
             # p_parameter = request.POST['p_parameter']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['KNeighborsClassifier', ('Number of neighbors: ', neighbors), ('Column of target values: ', int(column))]
+            request.session['my_estimator'] = ['KNeighborsClassifier', [('Number of neighbors: ', neighbors), ('Column of target values: ', int(column))]]
             return redirect('experiment')
         else:
             return render(request, 'classification/nn-classification.html', {'max_column': request.session['max_column']})
@@ -376,7 +376,7 @@ def dt_classification(request):
             criterion = request.POST['criterion']
             max_leaf_nodes = request.POST['max_leaf_nodes']
             column = request.POST['choosen_column']
-            request.session['my_estimator'] = ['DecisionTreeClassifier', ('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Column of target values: ', int(column))]
+            request.session['my_estimator'] = ['DecisionTreeClassifier', [('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Column of target values: ', int(column))]]
             return redirect('experiment')
         else:
             return render(request, 'classification/dt_classification.html', {'max_column': request.session['max_column']})
