@@ -15,7 +15,7 @@
       {% for document in documents %}
 
       <!-- Delete file modal -->
-      <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+      <!-- <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -28,19 +28,21 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              
               <a class="btn btn-danger" role="button" href="{% url 'delete' document.id %}">Delete</a>
-              <!-- <button type="button" class="btn btn-danger">Yes, I am sure</button> -->
+              
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <tr>
         <td><a href="{% url 'file' document.id %}">{{ document.document.name }}</a> </td>
         <td>{{ document.description }}</td>
         <td>{{ document.uploaded_at }}</td>
         <!-- <td><a class="btn btn-danger" role="button" href="{% url 'delete' document.id %}" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Delete</a></td> -->
-        <td><a href="{% url 'delete' document.id %}" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Delete</a></td>
+        <!-- <td><a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Delete</a></td> -->
+        <td><a href="{% url 'delete' document.id %}"> Delete</a></td>
       </tr>
       {% endfor %}
     </tbody>

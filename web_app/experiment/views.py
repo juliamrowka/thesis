@@ -7,9 +7,9 @@ from .models import Document
 import openpyxl as op
 import os
 import pandas as pd
-from sklearn import preprocessing
-from sklearn import datasets
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+# from sklearn import preprocessing
+# from sklearn import datasets
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
 from sklearn.decomposition import PCA
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -33,7 +33,7 @@ def model_form_upload(request):
                 newdoc.save()
                 messages.success(request, "You have successfully uploaded file!")
                 request.session['filename'] = filename
-                request.session['my_pipeline'] = []
+                # request.session['my_pipeline'] = []
                 return redirect('experiment')
             elif files.count() > 0:
                 messages.success(request, "A file with that name already exists.")
@@ -55,8 +55,8 @@ def choose_file(request, pk):
         filename = choosen_file.document
         messages.success(request, "You have successfully chosen file!")
         request.session['filename'] = str(filename)
-        request.session['my_pipeline'] = []
-        request.session['my_estimator'] = []
+        if 'my_pipeline' in request.session: del request.session['my_pipeline']
+        if 'my_estimator' in request.session: del request.session['my_estimator']
         # print(filename)
         return redirect('experiment')
     else:
@@ -78,9 +78,10 @@ def delete_file(request, pk):
             print('file removed')
             messages.success(request, "You have successfully removed file!")
         if filename == request.session['filename']:
-            request.session['filename'] = ''
-            request.session['max_column'] = ''
-            request.session['my_pipeline'] = []
+            del request.session['filename']
+            if 'max_column' in request.session: del request.session['max_column']
+            if 'my_pipeline' in request.session: del request.session['my_pipeline']
+            if 'my_estimator' in request.session: del request.session['my_estimator']
             print('session filename')
         return redirect('experiment')
     else:
@@ -94,6 +95,8 @@ def experiment(request):
     if request.user.is_authenticated:
         if 'filename' in request.session:
             if len(request.session['filename']) > 0:
+                my_pipeline = None
+                my_estimator = None
                 excel_name = str(request.session['filename'])
                 excel_data = list()
                 wb = op.load_workbook(request.session['filename'])
@@ -107,10 +110,10 @@ def experiment(request):
                 if 'my_pipeline' in request.session:
                     my_pipeline = request.session['my_pipeline']
                 if 'my_estimator' in request.session:
-                    my_estimator = request.session['my_estimator']   
-                    return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name, 'my_pipeline': my_pipeline, 'my_estimator': my_estimator})
-                else:
-                    return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name})
+                    my_estimator = request.session['my_estimator'] 
+                return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name, 'my_pipeline': my_pipeline, 'my_estimator': my_estimator})
+                # else:
+                #     return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name})
             else:
                 return render(request, 'experiment.html', {})
         else:
@@ -147,10 +150,13 @@ def std(request):
                 # print(f'pipe exists: {pipe}')
                 # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
-        else:
+        elif 'max_column' in request.session:
             max_column = request.session['max_column']
             # print(type(max_column))
             return render(request, 'preprocessing/std.html', {'max_column': max_column})
+        else:
+            messages.success(request, "You need to choose data file first")
+        return redirect('upload')
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -173,10 +179,13 @@ def minmax(request):
                 # print(f'pipe exists: {pipe}')
                 # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
-        else:
+        elif 'max_column' in request.session:
             max_column = request.session['max_column']
             # print(type(max_column))
             return render(request, 'preprocessing/minmax.html', {'max_column': max_column})
+        else:
+            messages.success(request, "You need to choose data file first")
+        return redirect('upload')
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -199,10 +208,11 @@ def norm(request):
                 # print(f'pipe exists: {pipe}')
                 # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
+        elif 'max_column' in request.session:
+            return render(request, 'preprocessing/norm.html', {})
         else:
-            max_column = request.session['max_column']
-            # print(type(max_column))
-            return render(request, 'preprocessing/norm.html', {'max_column': max_column})
+            messages.success(request, "You need to choose data file first")
+        return redirect('upload')
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -225,10 +235,12 @@ def pca(request):
                 # print(f'pipe exists: {pipe}')
                 # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
-        else:
+        elif 'max_column' in request.session:
             n_component = request.session['max_column']
-            # print(type(n_component))
             return render(request, 'preprocessing/pca.html', {'n_component': n_component})
+        else:
+            messages.success(request, "You need to choose data file first")
+        return redirect('upload')
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
@@ -384,43 +396,55 @@ def dt_classification(request):
         messages.success(request, "You need to log in first")
         return redirect('home')
     
-
 def compute(request):
     """
     description
     """
     if request.user.is_authenticated:
-        # header_column = 0
-        # cols = "A:B"
-        wb = pd.read_excel(io=request.session['filename'], header=0)
-        print(wb)
-        # print(type(wb))
-        ct= ColumnTransformer([('std',StandardScaler(),[0]), ('std2',StandardScaler(),[1])], remainder="passthrough")
-        ct.fit(wb)
-        res_ct=ct.transform(wb)
-        print(res_ct)
-        # print(wb.iloc[:, 0])
-        # print(wb.iloc[:, 1:4])
+        if 'my_pipeline' and 'my_estimator' in request.session:
+            transformer_list = []
+            for i in request.session['my_pipeline']:
+                if i[0] == 'Normalizer': transformer_list.append(('norm', Normalizer(norm=i[1][1])))
+                if i[0] == 'PCA': transformer_list.append(('pca', PCA(n_components=i[1][1])))
+                # pass
+            print(transformer_list)
 
-        # print(request.session['my_estimator'][len(request.session['my_estimator'])-1][1])
-        target_column = request.session['my_estimator'][len(request.session['my_estimator'])-1][1] - 1
-        # print(target_column)
-        # # target = wb.iloc[:, target_column-1]
-        # print(type(request.session['my_estimator']))
+            # header_column = 0
+            # cols = "A:B"
+            wb = pd.read_excel(io=request.session['filename'], header=0)
+            print(wb)
+            # print(type(wb))
+            ct= ColumnTransformer([('std',StandardScaler(),[0]), ('std2',StandardScaler(),[1])], remainder="passthrough")
+            ct.fit(wb)
+            res_ct=ct.transform(wb)
+            print(res_ct)
+            # print(wb.iloc[:, 0])
+            # print(wb.iloc[:, 1:4])
 
-        X_train,X_test,y_train,y_test=train_test_split(wb.iloc[:,[x for x in range(len(wb.columns)) if x!=target_column]], wb.iloc[:, target_column],test_size=0.2,random_state=0)
-        # X_train,X_test,y_train,y_test=train_test_split(wb.iloc[:, 1:4],wb.iloc[:, 0],test_size=0.2,random_state=0)
-        # iris = datasets.load_iris()
-        # X_train,X_test,y_train,y_test=train_test_split(iris.data,iris.target,test_size=0.2,random_state=0)
-        pipe4=Pipeline([('pca', PCA(n_components=2)),('tree', DecisionTreeClassifier())])
+            # print(request.session['my_estimator'][len(request.session['my_estimator'])-1][1])
+            target_column = request.session['my_estimator'][1][len(request.session['my_estimator'][1])-1][1] - 1
+            print(f'target_column: {target_column}')
+            # # target = wb.iloc[:, target_column-1]
+            # print(type(request.session['my_estimator']))
 
-        pipe4.fit(X_train,y_train)
-        res=pipe4.predict(X_train)
-        print(np.transpose(np.array([y_train,res])))
-        print(pipe4.score(X_test,y_test))
-        scores=cross_val_score(pipe4,X_train,y_train,cv=10)
-        print(f"Średnia {scores.mean()}, odchylenie standardowe {scores.std()}")
-        return render(request, 'compute.html', {})
+            X_train,X_test,y_train,y_test=train_test_split(wb.iloc[:,[x for x in range(len(wb.columns)) if x!=target_column]], wb.iloc[:, target_column],test_size=0.2,random_state=0)
+            # X_train,X_test,y_train,y_test=train_test_split(wb.iloc[:, 1:4],wb.iloc[:, 0],test_size=0.2,random_state=0)
+            # iris = datasets.load_iris()
+            # X_train,X_test,y_train,y_test=train_test_split(iris.data,iris.target,test_size=0.2,random_state=0)
+            pipe4=Pipeline([('pca', PCA(n_components=2)),('tree', DecisionTreeClassifier())])
+
+            pipe4.fit(X_train,y_train)
+            res=pipe4.predict(X_train)
+            print(np.transpose(np.array([y_train,res])))
+            print(pipe4.score(X_test,y_test))
+            scores=cross_val_score(pipe4,X_train,y_train,cv=10)
+            print(f"Średnia {scores.mean()}, odchylenie standardowe {scores.std()}")
+            messages.success(request, f"Średnia {scores.mean()}, odchylenie standardowe {scores.std()}")
+            return render(request, 'compute.html', {})
+        else:
+            messages.success(request, "No data")
+            return render(request, 'compute.html', {}) 
+        # return render(request, 'compute.html', {})
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')
