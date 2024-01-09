@@ -14,7 +14,11 @@ from sklearn.decomposition import PCA
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.svm import LinearSVR, LinearSVC
+from sklearn.naive_bayes import CategoricalNB
 from sklearn.model_selection import cross_val_score
 import numpy as np
 
@@ -55,6 +59,7 @@ def choose_file(request, pk):
         filename = choosen_file.document
         messages.success(request, "You have successfully chosen file!")
         request.session['filename'] = str(filename)
+        if 'my_column_transformer' in request.session: del request.session['my_column_transformer']
         if 'my_pipeline' in request.session: del request.session['my_pipeline']
         if 'my_estimator' in request.session: del request.session['my_estimator']
         # print(filename)
@@ -80,6 +85,7 @@ def delete_file(request, pk):
         if filename == request.session['filename']:
             del request.session['filename']
             if 'max_column' in request.session: del request.session['max_column']
+            if 'my_column_transformer' in request.session: del request.session['my_column_transformer']
             if 'my_pipeline' in request.session: del request.session['my_pipeline']
             if 'my_estimator' in request.session: del request.session['my_estimator']
             print('session filename')
@@ -95,8 +101,6 @@ def experiment(request):
     if request.user.is_authenticated:
         if 'filename' in request.session:
             if len(request.session['filename']) > 0:
-                my_pipeline = None
-                my_estimator = None
                 excel_name = str(request.session['filename'])
                 excel_data = list()
                 wb = op.load_workbook(request.session['filename'])
@@ -107,13 +111,17 @@ def experiment(request):
                     for cell in row:
                         row_data.append(str(cell.value))
                     excel_data.append(row_data)
+                context = {'excel_data': excel_data, 'excel_name': excel_name}
+                if 'my_column_transformer' in request.session:
+                    my_column_transformer = request.session['my_column_transformer']
+                    context.update({'my_column_transformer': my_column_transformer})
                 if 'my_pipeline' in request.session:
                     my_pipeline = request.session['my_pipeline']
+                    context.update({'my_pipeline': my_pipeline})
                 if 'my_estimator' in request.session:
                     my_estimator = request.session['my_estimator'] 
-                return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name, 'my_pipeline': my_pipeline, 'my_estimator': my_estimator})
-                # else:
-                #     return render(request, 'experiment.html', {'excel_data': excel_data, 'excel_name': excel_name})
+                    context.update({'my_estimator': my_estimator})
+                return render(request, 'experiment.html', context)
             else:
                 return render(request, 'experiment.html', {})
         else:
@@ -139,20 +147,19 @@ def std(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
-            if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['StandardScaler', ('Chosen column: ', int(column))]]
+            if 'my_column_transformer' not in request.session:
+                request.session['my_column_transformer'] = [['StandardScaler', ('Chosen column: ', int(column))]]
                 # print('just have created pipeline')
             else:
-                pipe = request.session['my_pipeline']
+                pipe = request.session['my_column_transformer']
                 pipe.append(['StandardScaler', ('Chosen column: ', int(column))])
-                request.session['my_pipeline'] = pipe
+                request.session['my_column_transformer'] = pipe
 
                 # print(f'pipe exists: {pipe}')
                 # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
         elif 'max_column' in request.session:
             max_column = request.session['max_column']
-            # print(type(max_column))
             return render(request, 'preprocessing/std.html', {'max_column': max_column})
         else:
             messages.success(request, "You need to choose data file first")
@@ -168,13 +175,13 @@ def minmax(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
-            if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['MinMaxScaler', ('Chosen column: ', int(column))]]
+            if 'my_column_transformer' not in request.session:
+                request.session['my_column_transformer'] = [['MinMaxScaler', ('Chosen column: ', int(column))]]
                 # print('no pipeline')
             else:
-                pipe = request.session['my_pipeline']
+                pipe = request.session['my_column_transformer']
                 pipe.append(['MinMaxScaler', ('Chosen column: ', int(column))])
-                request.session['my_pipeline'] = pipe
+                request.session['my_column_transformer'] = pipe
 
                 # print(f'pipe exists: {pipe}')
                 # print(f'pipeline in session {request.session["my_pipeline"]}')
@@ -351,7 +358,8 @@ def svm_classification(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             c_parameter = request.POST['c_parameter']
-            class_weight = request.POST['class_weight']
+            if request.POST['class_weight'] == 'None': class_weight = None
+            else: class_weight = request.POST['class_weight']
             column = request.POST['choosen_column']
             request.session['my_estimator'] = ['LinearSVC', [('C parameter: ', c_parameter), ('Class weight: ', class_weight), ('Column of target values: ', int(column))]]
             return redirect('experiment')
@@ -401,20 +409,54 @@ def compute(request):
     description
     """
     if request.user.is_authenticated:
-        if 'my_pipeline' and 'my_estimator' in request.session:
+        if 'my_estimator' in request.session:
             transformer_list = []
-            for i in request.session['my_pipeline']:
-                if i[0] == 'Normalizer': transformer_list.append(('norm', Normalizer(norm=i[1][1])))
-                if i[0] == 'PCA': transformer_list.append(('pca', PCA(n_components=i[1][1])))
-                # pass
+            column_transformer_list = []
+            x = 0
+            if 'my_column_transformer' in request.session:
+                for i in request.session['my_column_transformer']:
+                    if i[0] == 'StandardScaler': column_transformer_list.append((f'std_{x}', StandardScaler(), [i[1][1]-1]))
+                    if i[0] == 'MinMaxScaler': column_transformer_list.append((f'minmax_{x}', MinMaxScaler(), [i[1][1]-1]))
+                    x = x+1
+
+            x = 0
+
+            if 'my_pipeline' in request.session:
+                for i in request.session['my_pipeline']:
+                    if i[0] == 'Normalizer': transformer_list.append(('norm', Normalizer(norm=i[1][1])))
+                    if i[0] == 'PCA': transformer_list.append(('pca', PCA(n_components=i[1][1])))
+                    x = x+1
+            # print(f'Norma: {transformer_list[0][1].norm}')
+            
+            est = request.session['my_estimator']
+                
+            if est[0] == 'LinearRegression': transformer_list.append(('linear', LinearRegression()))
+            elif est[0] == 'LinearSVR': transformer_list.append(('svr', LinearSVR(epsilon=float(est[1][0][1]), C=float(est[1][1][1]), intercept_scaling=float(est[1][2][1]) )))
+            elif est[0] == 'KNeighborsRegressor': transformer_list.append(('knn_reg', KNeighborsRegressor(n_neighbors=int(est[1][0][1]) )))
+            elif est[0] == 'DecisionTreeRegressor': transformer_list.append(('tree_reg', DecisionTreeRegressor(criterion=est[1][0][1], max_leaf_nodes=int(est[1][1][1]) )))
+            
+            elif est[0] == 'CategoricalNB': transformer_list.append(('nb', CategoricalNB(alpha=float(est[1][0][1]) )))
+            elif est[0] == 'LinearSVC': transformer_list.append(('svc', LinearSVC(C=float(est[1][0][1]), class_weight=(est[1][1][1]) )))
+            elif est[0] == 'KNeighborsClassifier': transformer_list.append(('knn_class', KNeighborsClassifier(n_neighbors=int(est[1][0][1]) )))
+            elif est[0] == 'DecisionTreeClassifier': transformer_list.append(('tree_class', DecisionTreeClassifier(criterion=est[1][0][1], max_leaf_nodes=int(est[1][1][1]) )))
+           
+            print(column_transformer_list)
             print(transformer_list)
+
+            ct = ColumnTransformer(column_transformer_list, remainder="passthrough")
+            print(ct)
+
+            pipe = Pipeline([('ct', ct)])
+            pipe.steps.extend(transformer_list)
+            print(pipe)
+            
 
             # header_column = 0
             # cols = "A:B"
             wb = pd.read_excel(io=request.session['filename'], header=0)
-            print(wb)
+            # print(wb)
             # print(type(wb))
-            ct= ColumnTransformer([('std',StandardScaler(),[0]), ('std2',StandardScaler(),[1])], remainder="passthrough")
+            # ct= ColumnTransformer([('std',StandardScaler(),[0]), ('std2',StandardScaler(),[1])], remainder="passthrough")
             ct.fit(wb)
             res_ct=ct.transform(wb)
             print(res_ct)
@@ -422,7 +464,7 @@ def compute(request):
             # print(wb.iloc[:, 1:4])
 
             # print(request.session['my_estimator'][len(request.session['my_estimator'])-1][1])
-            target_column = request.session['my_estimator'][1][len(request.session['my_estimator'][1])-1][1] - 1
+            target_column = est[1][len(est[1])-1][1] - 1
             print(f'target_column: {target_column}')
             # # target = wb.iloc[:, target_column-1]
             # print(type(request.session['my_estimator']))
@@ -433,11 +475,11 @@ def compute(request):
             # X_train,X_test,y_train,y_test=train_test_split(iris.data,iris.target,test_size=0.2,random_state=0)
             pipe4=Pipeline([('pca', PCA(n_components=2)),('tree', DecisionTreeClassifier())])
 
-            pipe4.fit(X_train,y_train)
-            res=pipe4.predict(X_train)
-            print(np.transpose(np.array([y_train,res])))
-            print(pipe4.score(X_test,y_test))
-            scores=cross_val_score(pipe4,X_train,y_train,cv=10)
+            pipe.fit(X_train,y_train)
+            res=pipe.predict(X_train)
+            # print(np.transpose(np.array([y_train,res])))
+            # print(pipe.score(X_test,y_test))
+            scores=cross_val_score(pipe,X_train,y_train,cv=10)
             print(f"Średnia {scores.mean()}, odchylenie standardowe {scores.std()}")
             messages.success(request, f"Średnia {scores.mean()}, odchylenie standardowe {scores.std()}")
             return render(request, 'compute.html', {})

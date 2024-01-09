@@ -66,6 +66,23 @@
     {% endif %}
 
 
+    {% if my_column_transformer %}
+    {% for list in my_column_transformer %}
+    <div class="card">
+        <div class="card-header">
+            {{list.0}}
+        </div>
+        <div class="card-body">
+            {{list.1.0}}{{list.1.1}}
+            <!-- {% for i in list %}
+            <p class="card-text">{{i}}</p>
+            {% endfor %} -->
+        </div>
+    </div>
+    <br />
+    {% endfor %}
+    {% endif %}
+
     {% if my_pipeline %}
     {% for list in my_pipeline %}
     <div class="card">
