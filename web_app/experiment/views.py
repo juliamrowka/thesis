@@ -647,12 +647,59 @@ def compute(request):
                 newmodel = MLModel(file = file)
                 newmodel.user = request.user
                 newmodel.save()
+                return redirect('models')
 
             return render(request, 'compute.html', context)
         else:
             messages.success(request, "No data")
             return render(request, 'compute.html', {}) 
         # return render(request, 'compute.html', {})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def show_models(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        models = MLModel.objects.filter(user=request.user)
+        return render(request, 'models_list.html', {'models': models})
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+    
+def download_model(request, pk):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        to_download = get_object_or_404(MLModel, pk=pk)
+        filename = str(to_download.file)
+        if filename:
+            with open(filename, 'rb') as fl:
+                response = HttpResponse(fl.read(), content_type="application/octet-stream")
+                response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(filename)
+                return response
+        # raise Http404
+        messages.success(request, "You have successfully download file!")
+        return redirect('experiment')
+    else:
+        messages.success(request, "You need to log in first")
+        return redirect('home')
+
+def delete_model(request, pk):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        to_delete = get_object_or_404(MLModel, pk=pk)
+        filename = str(to_delete.file)
+        if filename:
+            to_delete.delete()
+            os.remove(filename)
+            messages.success(request, "You have successfully removed file!")
+        return redirect('experiment')
     else:
         messages.success(request, "You need to log in first")
         return redirect('home')

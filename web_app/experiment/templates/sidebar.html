@@ -20,9 +20,9 @@
                 <span class="d-none d-sm-inline mx-1">Hello, {{user.first_name}}!</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                <li><a class="dropdown-item" href="#">New project...</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'home' %}">Home</a></li>
+                <li><a class="dropdown-item" href="{% url 'upload' %}">My data files</a></li>
+                <li><a class="dropdown-item" href="{% url 'models' %}">My ML models</a></li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>

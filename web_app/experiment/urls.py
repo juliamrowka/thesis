@@ -7,7 +7,7 @@ urlpatterns = [
     path('', views.experiment, name='experiment'),
     path('upload/', views.model_form_upload, name='upload'),
     path('file/<int:pk>', views.choose_file, name='file'),
-    path('delete/<int:pk>', views.delete_file, name='delete'),
+    path('delete-file/<int:pk>', views.delete_file, name='delete-file'),
     path('transformer/', views.transformer, name='transformer'),
     path('transformer/std', views.std, name='std'),
     path('transformer/minmax', views.minmax, name='minmax'),
@@ -26,6 +26,10 @@ urlpatterns = [
     path('evaluation/random-split', views.random_split, name='random-split'),
     path('evaluation/cross_validation', views.cross_validation, name='cross-validation'),
     path('compute', views.compute, name='compute'),
+    path('models', views.show_models, name='models'),
+    path('download/<int:pk>', views.download_model, name='download'),
+    path('delete-model/<int:pk>', views.delete_model, name='delete-model'),
+
     # path('compute/save-model', views.save_model, name='save_model'),
     # path('documents', views.choose_file, name='choose_file')
 
