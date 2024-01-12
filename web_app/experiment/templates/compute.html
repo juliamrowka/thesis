@@ -2,4 +2,152 @@
 
 {% block content %}
 
-{% endblock %}
+<div class="container-fluid p-3">
+  <h1>Results</h1>
+  <hr>
+  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates, aut similique? Qui tempore officia
+    excepturi omnis sit perferendis deserunt porro? Deleniti deserunt quas, ducimus eaque aperiam corrupti aliquid,
+    repellat nostrum laborum aliquam pariatur cumque hic libero explicabo architecto doloremque maiores. Doloribus
+    unde minima quaerat repellendus quod cum optio velit ducimus error asperiores nostrum labore a aliquam facere
+    dicta quidem, qui quam consectetur. Quia illum autem odio doloribus excepturi dolorem odit eligendi pariatur
+    dolor provident. Incidunt, expedita delectus ipsam aliquam eos quaerat fuga omnis veritatis odio iusto deleniti
+    harum est esse saepe quas voluptate illum voluptatem?</p>
+
+
+  {% if excel_data %}
+  <div class="row">
+    <div class="accordion" id="accordionPanelsStayOpenExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse"
+            data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+            aria-controls="panelsStayOpen-collapseOne">
+            <div>Źródło danych: <strong>{{ excel_name }}</strong></div>
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+          <div class="accordion-body">
+            <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 200px;">
+              <table class="table table-bordered table-condensed table-hover align-middle">
+                {% for row in excel_data %}
+                <tr>
+                  {% for cell in row %}
+                  <th scope="row">{{ cell }}</th>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+  {% endif %}
+
+  {% if scores1_clf %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <table class="table">
+        <tbody>
+          <tr>
+            <th scope="row">Precision macro</th>
+            <td class="text-center">{{scores1_clf.precision_macro}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Precision micro</th>
+            <td class="text-center">{{scores1_clf.precision_micro}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Recall macro</th>
+            <td class="text-center">{{scores1_clf.recall_macro}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Recall micro</th>
+            <td class="text-center">{{scores1_clf.recall_micro}}</td>
+          </tr>
+          <tr>
+            <th scope="row">F1 macro</th>
+            <td class="text-center">{{scores1_clf.f1_macro}}</td>
+          </tr>
+          <tr>
+            <th scope="row">F1 micro</th>
+            <td class="text-center">{{scores1_clf.f1_micro}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Accuracy</th>
+            <td class="text-center">{{scores1_clf.accuracy}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if scores2_clf %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <table class="table">
+        <tbody>
+          <tr>
+            <th scope="row">Precision macro</th>
+            <td class="text-center">{{scores2_clf.test_precision_macro.0}}</td>
+            <td class="text-center">{{scores2_clf.test_precision_macro.1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Precision micro</th>
+            <td class="text-center">{{scores2_clf.test_precision_micro.0}}</td>
+            <td class="text-center">{{scores2_clf.test_precision_micro.1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Recall macro</th>
+            <td class="text-center">{{scores2_clf.test_recall_macro.0}}</td>
+            <td class="text-center">{{scores2_clf.test_recall_macro.1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Recall micro</th>
+            <td class="text-center">{{scores2_clf.test_recall_micro.0}}</td>
+            <td class="text-center">{{scores2_clf.test_recall_micro.1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">F1 macro</th>
+            <td class="text-center">{{scores2_clf.test_f1_macro.0}}</td>
+            <td class="text-center">{{scores2_clf.test_f1_macro.1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">F1 micro</th>
+            <td class="text-center">{{scores2_clf.test_f1_micro.0}}</td>
+            <td class="text-center">{{scores2_clf.test_f1_micro.1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Accuracy</th>
+            <td class="text-center">{{scores2_clf.test_accuracy.0}}</td>
+            <td class="text-center">{{scores2_clf.test_accuracy.1}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+
+
+  <div class="row flex-shrink-0 p-3">
+    <div class="col-5 mx-auto">
+      <form method="POST" action="{% url 'compute' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" name="filename" placeholder="Filename" aria-label="" aria-describedby="basic-addon" required>
+            <span class="input-group-text" id="basic-addon">.pickle</span>
+          </div>
+        </div>
+        <br />
+        <button type="submit" class="btn btn-secondary">Save model</button>
+      </form>
+    </div>
+  </div>
+
+
+  {% endblock %}

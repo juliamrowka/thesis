@@ -104,7 +104,7 @@
     {% if my_estimator %}
     <div class="card">
         <div class="card-header">
-            {{my_estimator.0}}
+            {{my_estimator.0.0}}
         </div>
         <div class="card-body">
             {% for list in my_estimator.1 %}
@@ -115,6 +115,22 @@
     </div>
     <br />
     {% endif %}
+
+    {% if evaluation %}
+    <div class="card">
+        <div class="card-header">
+            {{evaluation.0}}
+        </div>
+        <div class="card-body">
+            {% for list in evaluation.1 %}
+            {{list.0}}{{list.1}}
+            <br/>
+            {% endfor %}
+        </div>
+    </div>
+    <br />
+    {% endif %}
+    
 
     <!-- <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
         <a href="{% url 'experiment' %}" class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">

@@ -1,0 +1,28 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+
+
+<div class="container-fluid p-3">
+    <div class="row flex-shrink-0 p-3">
+        <div class="col-5 mx-auto">
+            <h2>Cross Validation</h2>
+            <hr>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime dignissimos consectetur veniam quo cum.</p>
+            <form method="POST" action="{% url 'cross-validation' %}">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <div class="mb-3">
+                        <input class="form-control" type="number" placeholder="Number of folds" name="cv" required></input>
+                    </div>
+                </div>
+                <br />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

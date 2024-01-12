@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Document
+from .models import Document, MLModel
 
 class DocumentAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -11,3 +11,4 @@ class DocumentAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Document, DocumentAdmin)
+admin.site.register(MLModel)
