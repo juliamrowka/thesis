@@ -8,20 +8,20 @@
         <div class="col-5 mx-auto">
             <h2>MinMaxScaler</h2>
             <hr>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime dignissimos consectetur veniam quo cum.</p>
+            <p>Przekształca cechy poprzez skalowanie każdej cechy do danego zakresu. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html#sklearn.preprocessing.MinMaxScaler">Zobacz więcej..</a></p>
             <form method="POST" action="{% url 'minmax' %}">
                 {% csrf_token %}
 
                 <div class="mb-3">
                     <select class="form-select" name="choosen_column" required>
-                        <option selected>Choose column</option>
+                        <option selected>Wybierz kolumnę</option>
                         {% for i in max_column %}
                         <option value="{{i}}">{{i}}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <br />
-                <button type="submit" class="btn btn-secondary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
             </form>
         </div>

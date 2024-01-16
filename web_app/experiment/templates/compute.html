@@ -3,17 +3,9 @@
 {% block content %}
 
 <div class="container-fluid p-3">
-  <h1>Results</h1>
+  <h1>Wyniki</h1>
   <hr>
-  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates, aut similique? Qui tempore officia
-    excepturi omnis sit perferendis deserunt porro? Deleniti deserunt quas, ducimus eaque aperiam corrupti aliquid,
-    repellat nostrum laborum aliquam pariatur cumque hic libero explicabo architecto doloremque maiores. Doloribus
-    unde minima quaerat repellendus quod cum optio velit ducimus error asperiores nostrum labore a aliquam facere
-    dicta quidem, qui quam consectetur. Quia illum autem odio doloribus excepturi dolorem odit eligendi pariatur
-    dolor provident. Incidunt, expedita delectus ipsam aliquam eos quaerat fuga omnis veritatis odio iusto deleniti
-    harum est esse saepe quas voluptate illum voluptatem?</p>
-
-
+  <!-- 
   {% if excel_data %}
   <div class="row">
     <div class="accordion" id="accordionPanelsStayOpenExample">
@@ -44,6 +36,33 @@
     </div>
   </div>
   <br />
+  {% endif %} -->
+
+  {% if scores1_reg %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <table class="table">
+        <tbody>
+          <tr>
+            <th scope="row">Explained variance score</th>
+            <td class="text-center">{{scores1_reg.explained_variance_score}}</td>
+          </tr>
+          <tr>
+            <th scope="row">R2 score</th>
+            <td class="text-center">{{scores1_reg.r2_score}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Mean absolute error</th>
+            <td class="text-center">{{scores1_reg.neg_mean_absolute_error}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Mean squared error</th>
+            <td class="text-center">{{scores1_reg.neg_mean_squared_error}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
   {% endif %}
 
   {% if scores1_clf %}
@@ -78,6 +97,37 @@
           <tr>
             <th scope="row">Accuracy</th>
             <td class="text-center">{{scores1_clf.accuracy}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if scores2_reg %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <table class="table">
+        <tbody>
+          <tr>
+            <th scope="row">Explained variance score</th>
+            <td class="text-center">{{scores2_reg.test_explained_variance.0}}</td>
+            <td class="text-center">{{scores2_reg.test_explained_variance.1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">R2 score</th>
+            <td class="text-center">{{scores2_reg.test_r2.0}}</td>
+            <td class="text-center">{{scores2_reg.test_r2.1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Mean absolute error</th>
+            <td class="text-center">{{scores2_reg.test_neg_mean_absolute_error.0}}</td>
+            <td class="text-center">{{scores2_reg.test_neg_mean_absolute_error.1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Mean squared error</th>
+            <td class="text-center">{{scores2_reg.test_neg_mean_squared_error.0}}</td>
+            <td class="text-center">{{scores2_reg.test_neg_mean_squared_error.1}}</td>
           </tr>
         </tbody>
       </table>
@@ -134,20 +184,47 @@
 
 
   <div class="row flex-shrink-0 p-3">
-    <div class="col-5 mx-auto">
+    <div class="col-md-6 mx-auto">
       <form method="POST" action="{% url 'compute' %}">
         {% csrf_token %}
         <div class="mb-3">
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" name="filename" placeholder="Filename" aria-label="" aria-describedby="basic-addon" required>
-            <span class="input-group-text" id="basic-addon">.pickle</span>
+          <div class="d-flex justify-content-between">
+            <div class="input-group">
+              <input type="text" class="form-control" name="filename" placeholder="Nazwa pliku"
+                aria-describedby="basic-addon" required>
+              <span class="input-group-text" id="basic-addon">.pickle</span>
+            </div>
+            <button type="submit" class="btn btn-secondary mx-2">Zapisz</button>
           </div>
-        </div>
-        <br />
-        <button type="submit" class="btn btn-secondary">Save model</button>
       </form>
     </div>
   </div>
 
+  <div class="row">
+    <div class="col-md-6 mx-auto">
+      <h3>Instrukcja korzystania z modelu</h3>
+      <div>Przykładowy kod:</div>
+      <br />
+      <div class="border rounded p-3 bg-light">
+        <div><code class="text-secondary"># zaimportuj potrzebne paczki</code></div>
+        <div><code>import pandas as pd</code></div>
+        <div><code>from sklearn import metrics</code></div>
+        <div><code>import pickle</code></div>
+        <br />
+        <div><code class="text-secondary"># zaimportuj zbiór danych dla których chcesz zastosować model</code></div>
+        <div><code>dataset = pd.read_excel('your_filename.xlsx') </code></div>
+        <br />
+        <div><code>X = dataset.iloc[:, : -1].values </code></div>
+        <div><code>Y = dataset.iloc[:, -1].values </code></div>
+        <br />
+        <div><code class="text-secondary"># załaduj pobrany model</code></div>
+        <div><code>with open('your_model.pickle', 'rb') as f:</code></div>
+        <div><code>&nbsp;&nbsp;&nbsp;&nbsp;load_model = pickle.load(f)</code></div>
+        <br />
+        <div><code>y_pred = load_model.predict(X) </code></div>
+        <div><code>print('root mean squared error : ', metrics.r2_score(Y, y_pred)) </code></div>
+      </div>
+    </div>
+  </div>
 
   {% endblock %}

@@ -6,24 +6,24 @@
 <div class="container-fluid p-3">
     <div class="row flex-shrink-0 p-3">
         <div class="col-5 mx-auto">
-            <h1>Add estimator</h1>
+            <h1>Dodaj estymator</h1>
             <hr />
             <div class="accordion accordion-flush">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                            <h3>Regression</h3>
+                            <h3>Regresja</h3>
                         </button>
                     </h2>
                     <div id="flush-collapseOne" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <div class="row d-grid gap-3">
-                                <a class="btn btn-outline-secondary" href="{% url 'ordinary-least-squares'%}" role="button">Ordinary Least Squares</a>
-                                <a class="btn btn-outline-secondary" href="{% url 'svm-regression' %}" role="button">SVM Regression</a>
-                                <a class="btn btn-outline-secondary" href="{% url 'nearest-neighbors-regression' %}" role="button">Nearest Neighbors Regression</a>
-                                <a class="btn btn-outline-secondary" href="{% url 'decision-tree-regression' %}" role="button">Decision Tree Regression</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'ordinary-least-squares'%}" role="button">Metoda najmniejszych kwadratów</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'svm-regression' %}" role="button">Maszyna wektorów nośnych (SVM)</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'nearest-neighbors-regression' %}" role="button">Algorytm k najbliższych sąsiadów</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'decision-tree-regression' %}" role="button">Drzewo decyzyjne</a>
                             </div>
                         </div>
                     </div>
@@ -32,37 +32,23 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                            <h3>Classification</h3>
+                            <h3>Klasyfikacja</h3>
                         </button>
                     </h2>
                     <div id="flush-collapseTwo" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <div class="row d-grid gap-3">
-                                <a class="btn btn-outline-secondary" href="{% url 'categorical-naive-bayes' %}" role="button">Categorical Naive Bayes</a>
-                                <a class="btn btn-outline-secondary" href="{% url 'svm-classification' %}" role="button">SVM Classification</a>
-                                <a class="btn btn-outline-secondary" href="{% url 'nearest-neighbors-classification' %}" role="button">Nearest Neighbors Classification</a>
-                                <a class="btn btn-outline-secondary" href="{% url 'decision-tree-classification' %}" role="button">Decision Tree Classification</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'categorical-naive-bayes' %}" role="button">Naiwny klasyfikator bayesowski</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'svm-classification' %}" role="button">Maszyna wektorów nośnych (SVM)</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'nearest-neighbors-classification' %}" role="button">Algorytm k najbliższych sąsiadów</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'decision-tree-classification' %}" role="button">Drzewo decyzyjne</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- <div class="row d-grid gap-3">
-                <h2>Regression</h2>
-                <a class="btn btn-outline-secondary" href="{% url 'ordinary-least-squares'%}" role="button">Ordinary Least Squares</a>
-                <a class="btn btn-outline-secondary" href="{% url 'svm-regression' %}" role="button">SVM Regression</a>
-                <a class="btn btn-outline-secondary" href="#" role="button">Nearest Neighbors Regression</a>
-                <a class="btn btn-outline-secondary" href="#" role="button">Decision Tree Regression</a>
-                <a class="btn btn-outline-secondary" href="#" role="button">Stochastic Gradient Descent Regression</a>
-                <h2>Classification</h2>
-                <a class="btn btn-outline-secondary" href="#" role="button">Gaussian Naive Bayes</a>
-                <a class="btn btn-outline-secondary" href="#" role="button">SVM Classification</a>
-                <a class="btn btn-outline-secondary" href="#" role="button">Nearest Neighbors Classification</a>
-                <a class="btn btn-outline-secondary" href="#" role="button">Decision Tree Classification</a>
-                <a class="btn btn-outline-secondary" href="#" role="button">Stochastic Gradient Descent Classification</a>
-            </div> -->
+        
         </div>
     </div>
 </div>

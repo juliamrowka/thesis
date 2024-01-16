@@ -8,21 +8,16 @@
         <div class="col-5 mx-auto">
             <h2>KNeighborsRegressor</h2>
             <hr>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores
-                perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime
-                dignissimos consectetur veniam quo cum.</p>
+            <p>Regresja oparta na k-najbliższych sąsiadach.</p>
+            <p>Cel jest przewidywany poprzez lokalną interpolację celów powiązanych z najbliższymi sąsiadami w zestawie uczącym.
+                <a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html#sklearn.neighbors.KNeighborsRegressor">Zobacz więcej..</a>
+            </p>
             <form method="POST" action="{% url 'nearest-neighbors-regression' %}">
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input class="form-control" type="number" placeholder="N Neighbors" name="neighbors"></input>
+                    <input class="form-control" type="number" placeholder="Liczba sąsiadów" name="neighbors"></input>
                     <br/>
-                    <select class="form-select" name="choosen_column" required>
-                        <option selected>Choose column of target values</option>
-                        {% for i in max_column %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                    </select>
                     <!-- <br/> -->
                     <!-- <select class="form-select" name="weight" required>
                         <option selected>Weight function</option>
@@ -33,7 +28,7 @@
                     <input class="form-control" type="number" placeholder="P parameter" name="p_parameter"></input> -->
                 </div>
                 <br/>
-                <button type="submit" class="btn btn-secondary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
             </form>
         </div>

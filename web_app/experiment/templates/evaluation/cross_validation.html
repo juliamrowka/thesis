@@ -6,19 +6,19 @@
 <div class="container-fluid p-3">
     <div class="row flex-shrink-0 p-3">
         <div class="col-5 mx-auto">
-            <h2>Cross Validation</h2>
+            <h2>Walidacja krzyżowa</h2>
             <hr>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime dignissimos consectetur veniam quo cum.</p>
+            <p>Ocenia metryki za pomocą walidacji krzyżowej oraz rejestruje czasy dopasowania/wyników. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_validate.html#sklearn.model_selection.cross_validate">Zobacz więcej..</a></p>
             <form method="POST" action="{% url 'cross-validation' %}">
                 {% csrf_token %}
 
                 <div class="mb-3">
                     <div class="mb-3">
-                        <input class="form-control" type="number" placeholder="Number of folds" name="cv" required></input>
+                        <input class="form-control" type="number" placeholder="Liczba podzbiorów" name="cv" required></input>
                     </div>
                 </div>
                 <br />
-                <button type="submit" class="btn btn-secondary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
             </form>
         </div>

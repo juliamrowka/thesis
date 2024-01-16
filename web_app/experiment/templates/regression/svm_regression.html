@@ -8,25 +8,17 @@
         <div class="col-5 mx-auto">
             <h2>LinearSVR</h2>
             <hr>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores
-                perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime
-                dignissimos consectetur veniam quo cum.</p>
+            <p>Regresja liniowego wektora nośnego. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVR.html#sklearn.svm.LinearSVR">Zobacz więcej..</a></p>
             <form method="POST" action="{% url 'svm-regression' %}">
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input class="form-control" type="number" step="any" placeholder="Epsilon" name="epsilon"></input>
+                    <input class="form-control" type="number" step="any" placeholder="Parametr epsilon" name="epsilon"></input>
                     <br/>
-                    <input class="form-control" type="number" step="any" placeholder="Regularization parameter C" name="C_parameter"></input>
+                    <input class="form-control" type="number" step="any" placeholder="Parametr regularyzacji C" name="C_parameter"></input>
                     <br/>
-                    <input class="form-control" type="number" step="any" placeholder="Intercept scaling" name="intercept_scaling"></input>
+                    <input class="form-control" type="number" step="any" placeholder="Parametr intercept_scaling" name="intercept_scaling"></input>
                     <br/>
-                    <select class="form-select" name="choosen_column" required>
-                        <option selected>Choose column of target values</option>
-                        {% for i in max_column %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                    </select>
                     <!-- <select class="form-select" name="calculate_intercept" required>
                         <option selected>Calculate intercept</option>
                         <option value="True">True</option>
@@ -38,7 +30,7 @@
                     <input class="form-control" type="number" placeholder="Maximum number of iterations" name="iter_max"></input> -->
                 </div>
                 <br/>
-                <button type="submit" class="btn btn-secondary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
             </form>
         </div>

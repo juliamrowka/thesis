@@ -8,9 +8,13 @@
         <div class="col-5 mx-auto">
             <h2>LinearRegression</h2>
             <hr>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores
-                perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime
-                dignissimos consectetur veniam quo cum.</p>
+            <p>Zwykła metoda najmniejszych kwadratów.</p>
+
+            <p>Regresja liniowa dopasowuje model liniowy ze współczynnikami w = (w1,…, wp), aby zminimalizować resztkową
+                sumę kwadratów między obserwowanymi wartościami docelowymi w zbiorze danych a wartościami docelowymi
+                przewidywanymi przez przybliżenie liniowe.
+                <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html#sklearn.linear_model.LinearRegression">Zobacz więcej..</a>
+            </p>
             <form method="POST" action="{% url 'ordinary-least-squares' %}">
                 {% csrf_token %}
 
@@ -20,15 +24,9 @@
                         <option value="True">True</option>
                         <option value="False">False</option>
                     </select> -->
-                    <select class="form-select" name="choosen_column" required>
-                        <option selected>Choose column of target values</option>
-                        {% for i in max_column %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                    </select>
                 </div>
                 <br />
-                <button type="submit" class="btn btn-secondary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
             </form>
         </div>

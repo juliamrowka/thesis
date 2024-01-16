@@ -8,20 +8,25 @@
         <div class="col-5 mx-auto">
             <h2>PCA</h2>
             <hr>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime dignissimos consectetur veniam quo cum.</p>
+            <p>Analiza głównych składowych - Principal component analysis (PCA)</p>
+            <p>redukcja wymiarowości przy użyciu rozkładu wartości osobliwych danych w celu rzutowania ich na przestrzeń
+                o niższych wymiarach. Dane wejściowe są wyśrodkowane, ale nie skalowane dla każdej funkcji przed
+                zastosowaniem SVD.
+                <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA">Zobacz więcej..</a>
+            </p>
             <form method="POST" action="{% url 'pca' %}">
                 {% csrf_token %}
 
                 <div class="mb-3">
                     <select class="form-select" name="parameter_n" required>
-                        <option selected>Choose paramenter n</option>
+                        <option selected>Wybierz liczbę komponentów do zachowania</option>
                         {% for i in n_component %}
                         <option value="{{i}}">{{i}}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <br />
-                <button type="submit" class="btn btn-secondary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
             </form>
         </div>

@@ -7,9 +7,9 @@
     {% if models %}
     <table class="table table-hover ">
         <thead>
-            <td>Model name</td>
-            <td>Uploaded at</td>
-            <td>Action</td>
+            <td>Nazwa modelu</td>
+            <td>Data wgrania</td>
+            <td>Akcje</td>
         </thead>
         <tbody class="table-group-divider">
             {% for model in models %}
@@ -17,16 +17,43 @@
                 <td><a href="#">{{ model.file.name }}</a> </td>
                 <td>{{ model.uploaded_at }}</td>
                 <td>
-                    <a href="{% url 'delete-model' model.id %}">Delete</a>
-                    <a href="{% url 'download' model.id %}">Download</a>
+                    <a href="{% url 'delete-model' model.id %}">Usuń</a>
+                    <a href="{% url 'download' model.id %}">Pobierz</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+          <h3>Instrukcja korzystania z modelu</h3>
+          <div>Przykładowy kod:</div>
+          <br />
+          <div class="border rounded p-3 bg-light">
+            <div><code class="text-secondary"># zaimportuj potrzebne paczki</code></div>
+            <div><code>import pandas as pd</code></div>
+            <div><code>from sklearn import metrics</code></div>
+            <div><code>import pickle</code></div>
+            <br />
+            <div><code class="text-secondary"># zaimportuj zbiór danych dla których chcesz zastosować model</code></div>
+            <div><code>dataset = pd.read_excel('your_filename.xlsx') </code></div>
+            <br />
+            <div><code>X = dataset.iloc[:, : -1].values </code></div>
+            <div><code>Y = dataset.iloc[:, -1].values </code></div>
+            <br />
+            <div><code class="text-secondary"># załaduj pobrany model</code></div>
+            <div><code>with open('your_model.pickle', 'rb') as f:</code></div>
+            <div><code>&nbsp;&nbsp;&nbsp;&nbsp;load_model = pickle.load(f)</code></div>
+            <br />
+            <div><code>y_pred = load_model.predict(X) </code></div>
+            <div><code>print('root mean squared error : ', metrics.r2_score(Y, y_pred)) </code></div>
+          </div>
+        </div>
+      </div>
+
     {% else %}
-    <p>No documents</p>
+    <p>Brak modeli</p>
     {% endif %}
 </div>
 

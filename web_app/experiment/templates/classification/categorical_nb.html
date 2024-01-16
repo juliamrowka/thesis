@@ -6,26 +6,22 @@
 <div class="container-fluid p-3">
     <div class="row flex-shrink-0 p-3">
         <div class="col-5 mx-auto">
-            <h2>Categorical Naive Bayes</h2>
+            <h2>CategoricalNB</h2>
             <hr>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores
-                perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime
-                dignissimos consectetur veniam quo cum.</p>
+            <div class="justify-content-between">
+                <p>Naiwny klasyfikator Bayesa dla cech kategorycznych.</p>
+                <p>Kategoryczny klasyfikator Naive Bayes nadaje się do klasyfikacji z dyskretnymi cechami, które są
+                    rozłożone kategorycznie. Kategorie każdej cechy są losowane z rozkładu kategorialnego. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.CategoricalNB.html#sklearn.naive_bayes.CategoricalNB">Zobacz więcej..</a></p>
+            </div>
             <form method="POST" action="{% url 'categorical-naive-bayes' %}">
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input class="form-control" type="number" step="any" placeholder="Alpha" name="alpha"></input>
-                    <br/>
-                    <select class="form-select" name="choosen_column" required>
-                        <option selected>Choose column of target values</option>
-                        {% for i in max_column %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                    </select>
+                    <input class="form-control" type="number" step="any" placeholder="Parametr alpha" name="alpha"></input>
+                    <br />
                 </div>
-                <br/>
-                <button type="submit" class="btn btn-secondary">Submit</button>
+                <br />
+                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
             </form>
         </div>

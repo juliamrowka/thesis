@@ -8,30 +8,22 @@
         <div class="col-5 mx-auto">
             <h2>LinearSVC</h2>
             <hr>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores
-                perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime
-                dignissimos consectetur veniam quo cum.</p>
+            <p>Klasyfikacja liniowego wektora nośnego. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html#sklearn.svm.LinearSVC">Zobacz więcej..</a></p>
             <form method="POST" action="{% url 'svm-classification' %}">
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input class="form-control" type="number" step="any" placeholder="C parameter" name="c_parameter"></input>
+                    <input class="form-control" type="number" step="any" placeholder="Parametr regularyzacji C" name="c_parameter"></input>
                     <br/>
                     <select class="form-select" name="class_weight" required>
-                        <option selected>Choose class weight</option>
-                        <option value="balanced">Balanced</option>
-                        <option value="None">None</option>
+                        <option selected>Wybierz parametr class_weight</option>
+                        <option value="balanced">Zrównoważony</option>
+                        <option value="None">Brak</option>
                     </select>
                     <br/>
-                    <select class="form-select" name="choosen_column" required>
-                        <option selected>Choose column of target values</option>
-                        {% for i in max_column %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                    </select>
                 </div>
                 <br/>
-                <button type="submit" class="btn btn-secondary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
             </form>
         </div>

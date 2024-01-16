@@ -25,6 +25,29 @@ from sklearn.model_selection import cross_val_score, cross_validate
 from sklearn.metrics import recall_score, accuracy_score, precision_score, max_error, r2_score, mean_squared_error, d2_absolute_error_score, explained_variance_score, mean_absolute_error, f1_score
 import numpy as np
 
+
+# functions
+def switch_order(arr, a, b):
+    """
+    """
+    tmp = arr[a]
+    arr[a] = arr[b]
+    arr[b] = tmp
+
+def switch_up(arr, a):
+    """
+    Changes position of elemenet of list to one up
+    """
+    if a > 0:
+        switch_order(arr, a, a-1)
+
+def switch_down(arr, a):
+    """
+    """
+    if a < len(arr)-1:
+        switch_order(arr, a, a+1)
+
+# views
 def model_form_upload(request):
     """
     show upload form
@@ -38,19 +61,19 @@ def model_form_upload(request):
                 newdoc = Document(document = request.FILES['document'], description = request.POST['description'])
                 newdoc.user = request.user
                 newdoc.save()
-                messages.success(request, "You have successfully uploaded file!")
+                messages.success(request, "Pomyślnie przesłano plik!")
                 request.session['filename'] = filename
                 # request.session['my_pipeline'] = []
                 return redirect('experiment')
             elif files.count() > 0:
-                messages.success(request, "A file with that name already exists.")
+                messages.success(request, "Plik o tej nazwie już istnieje")
         else:
             form = DocumentForm()
             # return render(request, 'upload.html', {'form': form})
         documents = Document.objects.filter(user=request.user)
         return render(request, 'upload.html', {'documents': documents, 'form': form})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def choose_file(request, pk):
@@ -60,17 +83,17 @@ def choose_file(request, pk):
     if request.user.is_authenticated:
         choosen_file = Document.objects.get(id=pk)
         filename = choosen_file.document
-        messages.success(request, "You have successfully chosen file!")
+        messages.success(request, "Pomyślnie wybrano plik!")
         request.session['filename'] = str(filename)
         if 'max_column' in request.session: del request.session['max_column']
         if 'my_column_transformer' in request.session: del request.session['my_column_transformer']
         if 'my_pipeline' in request.session: del request.session['my_pipeline']
         if 'my_estimator' in request.session: del request.session['my_estimator']
-        if 'evaluation' in request.session: del request.session['evaluation']
+        if 'my_evaluation' in request.session: del request.session['my_evaluation']
         # print(filename)
         return redirect('experiment')
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def delete_file(request, pk):
@@ -86,18 +109,18 @@ def delete_file(request, pk):
             to_delete.delete()
             os.remove(filename)
             print('file removed')
-            messages.success(request, "You have successfully removed file!")
+            messages.success(request, "Pomyślnie usunięto plik!")
         if filename == request.session['filename']:
             del request.session['filename']
             if 'max_column' in request.session: del request.session['max_column']
             if 'my_column_transformer' in request.session: del request.session['my_column_transformer']
             if 'my_pipeline' in request.session: del request.session['my_pipeline']
             if 'my_estimator' in request.session: del request.session['my_estimator']
-            if 'evaluation' in request.session: del request.session['evaluation']
+            if 'my_evaluation' in request.session: del request.session['my_evaluation']
             print('session filename')
         return redirect('experiment')
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
 
 def experiment(request):
@@ -111,7 +134,8 @@ def experiment(request):
                 excel_data = list()
                 wb = op.load_workbook(request.session['filename'])
                 worksheet = wb.active
-                request.session['max_column'] = list(range(1,worksheet.max_column + 1))
+                # tworzenie listy indeksów kolumn (cech) - bez ostatniej kolumny (decyzyjnej)
+                request.session['max_column'] = list(range(1,worksheet.max_column))
                 for row in worksheet.iter_rows():
                     row_data = list()
                     for cell in row:
@@ -127,16 +151,16 @@ def experiment(request):
                 if 'my_estimator' in request.session:
                     my_estimator = request.session['my_estimator'] 
                     context.update({'my_estimator': my_estimator})
-                if 'evaluation' in request.session:
-                    evaluation = request.session['evaluation'] 
-                    context.update({'evaluation': evaluation})
+                if 'my_evaluation' in request.session:
+                    my_evaluation = request.session['my_evaluation'] 
+                    context.update({'my_evaluation': my_evaluation})
                 return render(request, 'experiment.html', context)
             else:
                 return render(request, 'experiment.html', {})
         else:
             return render(request, 'experiment.html', {})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
 
 def transformer(request):
@@ -146,7 +170,7 @@ def transformer(request):
     if request.user.is_authenticated:
         return render(request, 'transformer.html', {})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
 
 def std(request):
@@ -166,15 +190,24 @@ def std(request):
 
                 # print(f'pipe exists: {pipe}')
                 # print(f'pipeline in session {request.session["my_pipeline"]}')
+
+            # test
+            if 'my_pipeline' not in request.session:
+                request.session['my_pipeline'] = [['StandardScaler', ('Chosen column: ', int(column))]]
+            else:
+                pipe = request.session['my_pipeline']
+                pipe.append(['StandardScaler', ('Chosen column: ', int(column))])
+                request.session['my_pipeline'] = pipe
+
             return redirect('transformer')
         elif 'max_column' in request.session:
             max_column = request.session['max_column']
             return render(request, 'preprocessing/std.html', {'max_column': max_column})
         else:
-            messages.success(request, "You need to choose data file first")
+            messages.success(request, "Najpierw wybierz plik")
         return redirect('upload')
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def minmax(request):
@@ -194,16 +227,26 @@ def minmax(request):
 
                 # print(f'pipe exists: {pipe}')
                 # print(f'pipeline in session {request.session["my_pipeline"]}')
+
+            # test
+            if 'my_pipeline' not in request.session:
+                request.session['my_pipeline'] = [['MinMaxScaler', ('Chosen column: ', int(column))]]
+            else:
+                pipe = request.session['my_pipeline']
+                pipe.append(['MinMaxScaler', ('Chosen column: ', int(column))])
+                request.session['my_pipeline'] = pipe
+
+
             return redirect('transformer')
         elif 'max_column' in request.session:
             max_column = request.session['max_column']
             # print(type(max_column))
             return render(request, 'preprocessing/minmax.html', {'max_column': max_column})
         else:
-            messages.success(request, "You need to choose data file first")
+            messages.success(request, "Najpierw wybierz plik")
         return redirect('upload')
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def norm(request):
@@ -225,41 +268,42 @@ def norm(request):
                 # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
         elif 'max_column' in request.session:
-            return render(request, 'preprocessing/norm.html', {})
+            max_column = request.session['max_column']
+            return render(request, 'preprocessing/norm.html', {'max_column': max_column})
         else:
-            messages.success(request, "You need to choose data file first")
+            messages.success(request, "Najpierw wybierz plik")
         return redirect('upload')
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
-def pca(request):
-    """
-    description
-    """
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            parameter_n = request.POST['parameter_n']
-            if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['PCA', ('Chosen n parameter: ', int(parameter_n))]]
-                # print('no pipeline')
-            else:
-                pipe = request.session['my_pipeline']
-                pipe.append(['PCA', ('Chosen n parameter: ', int(parameter_n))])
-                request.session['my_pipeline'] = pipe
+# def pca(request):
+#     """
+#     description
+#     """
+#     if request.user.is_authenticated:
+#         if request.method == 'POST':
+#             parameter_n = request.POST['parameter_n']
+#             if 'my_pipeline' not in request.session:
+#                 request.session['my_pipeline'] = [['PCA', ('Chosen n parameter: ', int(parameter_n))]]
+#                 # print('no pipeline')
+#             else:
+#                 pipe = request.session['my_pipeline']
+#                 pipe.append(['PCA', ('Chosen n parameter: ', int(parameter_n))])
+#                 request.session['my_pipeline'] = pipe
 
-                # print(f'pipe exists: {pipe}')
-                # print(f'pipeline in session {request.session["my_pipeline"]}')
-            return redirect('transformer')
-        elif 'max_column' in request.session:
-            n_component = request.session['max_column']
-            return render(request, 'preprocessing/pca.html', {'n_component': n_component})
-        else:
-            messages.success(request, "You need to choose data file first")
-        return redirect('upload')
-    else:
-        messages.success(request, "You need to log in first")
-        return redirect('home')
+#                 # print(f'pipe exists: {pipe}')
+#                 # print(f'pipeline in session {request.session["my_pipeline"]}')
+#             return redirect('transformer')
+#         elif 'max_column' in request.session:
+#             n_component = request.session['max_column']
+#             return render(request, 'preprocessing/pca.html', {'n_component': n_component})
+#         else:
+#             messages.success(request, "Najpierw wybierz plik")
+#         return redirect('upload')
+#     else:
+#         messages.success(request, "Zaloguj się")
+#         return redirect('home')
     
 def estimator(request):
     """
@@ -268,7 +312,7 @@ def estimator(request):
     if request.user.is_authenticated:
         return render(request, 'estimator.html', {})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def ord_least_squares(request):
@@ -278,17 +322,16 @@ def ord_least_squares(request):
     # if request.user.is_authenticated:
     #     return render(request, 'ordinary-least-squares.html', {})
     # else:
-    #     messages.success(request, "You need to log in first")
+    #     messages.success(request, "Zaloguj się")
     #     return redirect('home')
     if request.user.is_authenticated:
         if request.method == 'POST':
-            column = request.POST['choosen_column']
-            request.session['my_estimator'] = [('LinearRegression', 'reg'), [('Column of target values: ', int(column))]]
+            request.session['my_estimator'] = [('LinearRegression', 'reg')]
             return redirect('experiment')
         else:
             return render(request, 'regression/ordinary_least_squares.html', {'max_column': request.session['max_column']})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def svm_regression(request):
@@ -300,13 +343,12 @@ def svm_regression(request):
             epsilon = request.POST['epsilon']
             C_parameter = request.POST['C_parameter']
             intercept_scaling = request.POST['intercept_scaling']
-            column = request.POST['choosen_column']
-            request.session['my_estimator'] = [('LinearSVR', 'reg'), [('Epsilon: ', epsilon), ('Regularization parameter C: ', C_parameter), ('Intercept scaling: ', intercept_scaling), ('Column of target values: ', int(column))]]
+            request.session['my_estimator'] = [('LinearSVR', 'reg'), [('Epsilon: ', epsilon), ('Regularization parameter C: ', C_parameter), ('Intercept scaling: ', intercept_scaling)]]
             return redirect('experiment')
         else:
             return render(request, 'regression/svm_regression.html', {'max_column': request.session['max_column']})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def nn_regression(request):
@@ -318,13 +360,12 @@ def nn_regression(request):
             neighbors = request.POST['neighbors']
             # weight = request.POST['weight']
             # p_parameter = request.POST['p_parameter']
-            column = request.POST['choosen_column']
-            request.session['my_estimator'] = [('KNeighborsRegressor', 'reg'), [('Number of neighbors: ', neighbors), ('Column of target values: ', int(column))]]
+            request.session['my_estimator'] = [('KNeighborsRegressor', 'reg'), [('Number of neighbors: ', neighbors)]]
             return redirect('experiment')
         else:
             return render(request, 'regression/nn_regression.html', {'max_column': request.session['max_column']})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def dt_regression(request):
@@ -335,13 +376,12 @@ def dt_regression(request):
         if request.method == 'POST':
             criterion = request.POST['criterion']
             max_leaf_nodes = request.POST['max_leaf_nodes']
-            column = request.POST['choosen_column']
-            request.session['my_estimator'] = [('DecisionTreeRegressor', 'reg'), [('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Column of target values: ', int(column))]]
+            request.session['my_estimator'] = [('DecisionTreeRegressor', 'reg'), [('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes)]]
             return redirect('experiment')
         else:
             return render(request, 'regression/dt_regression.html', {'max_column': request.session['max_column']})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def categorical_nb(request):
@@ -351,13 +391,12 @@ def categorical_nb(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             alpha = request.POST['alpha']
-            column = request.POST['choosen_column']
-            request.session['my_estimator'] = [('CategoricalNB', 'clf'), [('Alpha: ', alpha), ('Column of target values: ', int(column))]]
+            request.session['my_estimator'] = [('CategoricalNB', 'clf'), [('Alpha: ', alpha)]]
             return redirect('experiment')
         else:
             return render(request, 'classification/categorical_nb.html', {'max_column': request.session['max_column']})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def svm_classification(request):
@@ -369,13 +408,12 @@ def svm_classification(request):
             c_parameter = request.POST['c_parameter']
             if request.POST['class_weight'] == 'None': class_weight = None
             else: class_weight = request.POST['class_weight']
-            column = request.POST['choosen_column']
-            request.session['my_estimator'] = [('LinearSVC', 'clf'), [('C parameter: ', c_parameter), ('Class weight: ', class_weight), ('Column of target values: ', int(column))]]
+            request.session['my_estimator'] = [('LinearSVC', 'clf'), [('C parameter: ', c_parameter), ('Class weight: ', class_weight)]]
             return redirect('experiment')
         else:
             return render(request, 'classification/svm_classification.html', {'max_column': request.session['max_column']})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def nn_classification(request):
@@ -387,13 +425,12 @@ def nn_classification(request):
             neighbors = request.POST['neighbors']
             # weight = request.POST['weight']
             # p_parameter = request.POST['p_parameter']
-            column = request.POST['choosen_column']
-            request.session['my_estimator'] = [('KNeighborsClassifier', 'clf'), [('Number of neighbors: ', neighbors), ('Column of target values: ', int(column))]]
+            request.session['my_estimator'] = [('KNeighborsClassifier', 'clf'), [('Number of neighbors: ', neighbors)]]
             return redirect('experiment')
         else:
             return render(request, 'classification/nn_classification.html', {'max_column': request.session['max_column']})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
 
 def dt_classification(request):
@@ -404,13 +441,12 @@ def dt_classification(request):
         if request.method == 'POST':
             criterion = request.POST['criterion']
             max_leaf_nodes = request.POST['max_leaf_nodes']
-            column = request.POST['choosen_column']
-            request.session['my_estimator'] = [('DecisionTreeClassifier', 'clf'), [('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes), ('Column of target values: ', int(column))]]
+            request.session['my_estimator'] = [('DecisionTreeClassifier', 'clf'), [('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes)]]
             return redirect('experiment')
         else:
             return render(request, 'classification/dt_classification.html', {'max_column': request.session['max_column']})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def evaluation(request):
@@ -420,7 +456,7 @@ def evaluation(request):
     if request.user.is_authenticated:
         return render(request, 'evaluation.html', {})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
 
 def random_split(request):
@@ -430,12 +466,12 @@ def random_split(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             test_size = request.POST['test_size']
-            request.session['evaluation'] = ['train_test_split', [('test_size: ', test_size)]]
+            request.session['my_evaluation'] = ['train_test_split', [('test_size: ', test_size)]]
             return redirect('experiment')
         else:
             return render(request, 'evaluation/random_split.html', {})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')  
 
 def cross_validation(request):
@@ -445,12 +481,12 @@ def cross_validation(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             cv = request.POST['cv']
-            request.session['evaluation'] = ['cross_validate', [('cv: ', cv)]]
+            request.session['my_evaluation'] = ['cross_validate', [('cv: ', cv)]]
             return redirect('experiment')
         else:
             return render(request, 'evaluation/cross_validation.html', {})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')  
 
 def compute(request):
@@ -458,28 +494,67 @@ def compute(request):
     description
     """
     if request.user.is_authenticated:
-        if 'my_estimator' and 'evaluation' in request.session:
-            transformer_list = []
-            column_transformer_list = []
+        if 'my_estimator' and 'my_evaluation' in request.session:
 
-            # iteracja po elementach tablicy 'my_column_transformer' w celu odczytania transformacji i przyłączenia jej do listy
-            x = 0
-            if 'my_column_transformer' in request.session:
-                for i in request.session['my_column_transformer']:
-                    if i[0] == 'StandardScaler': column_transformer_list.append((f'std_{x}', StandardScaler(), [i[1][1]-1]))
-                    if i[0] == 'MinMaxScaler': column_transformer_list.append((f'minmax_{x}', MinMaxScaler(), [i[1][1]-1]))
-                    x = x+1
+            est = request.session['my_estimator']
+            ev = request.session['my_evaluation']
+            max_c = request.session['max_column']
+            context = {}
+            transformer_list = []
+
+            # odczytanie pliku wgranego przez użytkownika oraz wybranej kolumny decyzyjnej - zmiennej celu
+            wb = pd.read_excel(io=request.session['filename'], header=0)
+            # target_column = est[1][len(est[1])-1][1] - 1
+            # print(f'target_column: {target_column}')
 
             # iteracja po elementach tablicy 'my_pipeline' w celu odczytania transformacji i przyłączenia jej do listy
             x = 0
             if 'my_pipeline' in request.session:
                 for i in request.session['my_pipeline']:
-                    if i[0] == 'Normalizer': transformer_list.append((f'norm_{x}', Normalizer(norm=i[1][1])))
-                    if i[0] == 'PCA': transformer_list.append((f'pca_{x}', PCA(n_components=i[1][1])))
+                    if i[0] == 'StandardScaler':
+                        column = i[1][1]-1
+
+                        # brak zmiany kolejności kolumn - rozwiązanie 1
+                        before = (f'pass_before_{x}', 'passthrough', [v for v in range(column)])
+                        trans = (f'std_{x}', StandardScaler(), [column])
+                        after = (f'pass_after_{x}', 'passthrough', [v for v in range(column+1, len(max_c))])
+
+                        transformer_list.append((f'ct_std_{x}', ColumnTransformer([before, trans, after])))
+
+                        # brak zmiany kolejności kolumn - rozwiązanie 2
+                        # before = [(f"pass_before_{x}_{v}", "passthrough", [v]) for v in range(column)]
+                        # trans = [(f'std_{x}', StandardScaler(), [column])]
+                        # after = [(f"pass_after_{x}_{v}", "passthrough", [v]) for v in range(column+1, len(max_c))]
+
+                        # transformer_list.append((f'ct_std_{x}', ColumnTransformer( before + trans + after )))
+
+                        # transformer_list.append((f'ct_std_{x}', ColumnTransformer([(f'std_{x}', StandardScaler(), [column])], remainder='passthrough')))                   
+
+                    if i[0] == 'MinMaxScaler':
+                        column = i[1][1]-1
+
+                        # brak zmiany kolejności kolumn - rozwiązanie 1
+                        before = (f'pass_before_{x}', 'passthrough', [v for v in range(column)])
+                        trans = (f'std_{x}', MinMaxScaler(), [column])
+                        after = (f'pass_after_{x}', 'passthrough', [v for v in range(column+1, len(max_c))])
+
+                        transformer_list.append((f'ct_minmax_{x}', ColumnTransformer( [before, trans, after] )))
+
+                        # transformer_list.append((f'ct_minmax_{x}', ColumnTransformer([(f'minmax_{x}', MinMaxScaler(), [column])], remainder='passthrough')))                    
+
+                    if i[0] == 'Normalizer': 
+                        transformer_list.append((f'ct_norm_{x}', ColumnTransformer([(f'norm_{x}', Normalizer(norm=i[1][1]), [x for x in range(len(max_c))])])))
+
+                    # if i[0] == 'PCA': 
+                    #     # print(max_c)
+                    #     # max_c = list(range(1, i[1][1]+1))
+                    #     # print(max_c)
+                    #     transformer_list.append((f'pca_{x}', PCA(n_components=i[1][1])))
+
                     x = x+1
-            # print(f'Norma: {transformer_list[0][1].norm}')
             
-            est = request.session['my_estimator']
+            # pipe_trans = Pipeline(transformer_list.copy())
+            
 
             # odczytywanie wybranego estymatora i przyłączenie go do listy    
             if est[0][0] == 'LinearRegression': transformer_list.append(('linear', LinearRegression()))
@@ -491,42 +566,44 @@ def compute(request):
             elif est[0][0] == 'LinearSVC': transformer_list.append(('svc', LinearSVC(C=float(est[1][0][1]), class_weight=(est[1][1][1]) )))
             elif est[0][0] == 'KNeighborsClassifier': transformer_list.append(('knn_class', KNeighborsClassifier(n_neighbors=int(est[1][0][1]) )))
             elif est[0][0] == 'DecisionTreeClassifier': transformer_list.append(('tree_class', DecisionTreeClassifier(criterion=est[1][0][1], max_leaf_nodes=int(est[1][1][1]) )))
-           
-            # print(column_transformer_list)
-            # print(transformer_list)
+
 
             # stworzenie ColumnTransformer na podstawie listy 'column_transformer_list'
-            ct = ColumnTransformer(column_transformer_list, remainder="passthrough")
-            # print(type(ct))
+            # ct = ColumnTransformer(column_transformer_list, remainder="passthrough")
+
 
             # stworzenie Pipeline z ColumnTransformer oraz dołączenie transformacji i estymatora z listy 'transformer_list'
-            pipe = Pipeline([('ct', ct)])
-            pipe.steps.extend(transformer_list)
-            print(pipe)
+            # pipe = Pipeline([('ct', ct)])
+            # pipe.steps.extend(transformer_list)
 
-            # odczytanie pliku wgranego przez użytkownika oraz wybranej kolumny decyzyjnej - zmiennej celu
-            wb = pd.read_excel(io=request.session['filename'], header=0)
-            target_column = est[1][len(est[1])-1][1] - 1
-            # print(f'target_column: {target_column}')
+            # stworzenie Pipeline
+            pipe = Pipeline(transformer_list)
+            print(f'pipe: {pipe}')
+            # print(f'pipe trans: {pipe_trans}')
 
-            # podział danych na x i y (zmienne zależne i niezależna)
-            X = wb.iloc[:,[x for x in range(len(wb.columns)) if x!=target_column]]
-            y = wb.iloc[:, target_column]
-            # print(X.shape, y.shape)
 
-            ev = request.session['evaluation']
-            context = {}
+            # podział danych na x i y (zmienne zależne i zmienną niezależną)
+            # X = wb.iloc[:,[x for x in range(len(wb.columns)) if x!=target_column]]
+            # y = wb.iloc[:, target_column]
+            X = wb.iloc[:, : -1] 
+            y = wb.iloc[:, -1]
 
             # wybór sposobu podziału danych na zbiór uczący i testujący
+
+            # wybór podziału procentowego
             if ev[0] == 'train_test_split':
                 test_size = float(ev[1][0][1])
-                X_train,X_test,y_train,y_test=train_test_split(X, y, test_size=test_size, random_state=0)
-                # print(X_train.shape, y_train.shape)
-                # print(X_test.shape, y_test.shape)
+                X_train,X_test,y_train,y_test=train_test_split(X, y, test_size=test_size, random_state=0)              
+
+                # print(pipe_trans)
+                # print(X.shape)
+                # pipe_trans.fit(wb)
+                # x_trans = pipe_trans.transform(wb)
+                # print(x_trans)
 
                 pipe.fit(X_train,y_train)
                 y_pred=pipe.predict(X_test)
-                # print(y_pred.shape)
+                pipe.score(X_test,y_test)
 
                 if est[0][1] == 'reg':
                     
@@ -535,10 +612,10 @@ def compute(request):
                     # print(f'r2 score {r2_score(y_test, y_pred)}')
                     # print(f'mean_squared_error {mean_squared_error(y_test, y_pred)}')
                     scores1_reg = {
-                        'explained variance score': explained_variance_score(y_test, y_pred),
-                        'r2 score': r2_score(y_test, y_pred),
-                        'neg mean absolute error': mean_absolute_error(y_test, y_pred),
-                        'neg mean squared error': mean_squared_error(y_test, y_pred) 
+                        'explained_variance_score': explained_variance_score(y_test, y_pred),
+                        'r2_score': r2_score(y_test, y_pred),
+                        'neg_mean_absolute_error': mean_absolute_error(y_test, y_pred),
+                        'neg_mean_squared_error': mean_squared_error(y_test, y_pred) 
                     }
 
                     for x in scores1_reg.keys():
@@ -567,75 +644,48 @@ def compute(request):
 
                     context = {'scores1_clf': scores1_clf}
 
+            # wybór podziału krzyżowo-walidacyjnego
             elif ev[0] == 'cross_validate':
                 cv = int(ev[1][0][1])
-                print(cv)
 
                 if est[0][1] == 'reg': 
                     scoring = ['explained_variance', 'r2', 'neg_mean_absolute_error', 'neg_mean_squared_error' ]
 
                     scores2_reg = cross_validate(pipe, X, y, cv=cv, scoring=scoring)
 
+                    print(scores2_reg)
+
                     for x in scores2_reg.keys():
                         scores2_reg[x] = [scores2_reg[x].mean(), scores2_reg[x].std()]
 
                     for x, y in scores2_reg.items():
-                        list = []
+                        list_reg = []
                         for j in y:
-                            list.append(round(j, 4))
-                        scores2_reg[x] = list
+                            list_reg.append(round(j, 4))
+                        scores2_reg[x] = list_reg
 
                     context = {'scores2_reg': scores2_reg}
-                    
-                    
-                    # print(f"Explained variance mean {scores['test_explained_variance'].mean()}")
-                    # print(f"Explained variance std {scores['test_explained_variance'].std()}")
-                    # print(f"R2 mean {scores['test_r2'].mean()}")
-                    # print(f"R2 std {scores['test_r2'].std()}")
 
                 elif est[0][1] == 'clf': 
                     scoring = ['precision_macro', 'precision_micro', 'recall_macro', 'recall_micro', 'f1_macro', 'f1_micro', 'accuracy']
 
                     scores2_clf = cross_validate(pipe, X, y, cv=cv, scoring=scoring)
 
+                    print(scores2_clf)
+
                     for x in scores2_clf.keys():
-                        # print(x)
-                        # print([scores2[x].mean(), scores2[x].std()])
                         scores2_clf[x] = [scores2_clf[x].mean(), scores2_clf[x].std()]
-                    
-                    # print(scores2_clf)
-                    # scores2 = cross_validate(pipe, X, y, cv=cv, scoring=scoring)
-                    # scores2['test_precision_macro'] = [scores2['test_precision_macro'].mean(), scores2['test_precision_macro'].std()]
-                    # scores2['test_precision_micro'] = [scores2['test_precision_micro'].mean(), scores2['test_precision_micro'].std()]
-                    # scores2['test_recall_macro'] = [scores2['test_recall_macro'].mean(), scores2['test_recall_macro'].std()]
-                    # scores2['test_recall_micro'] = [scores2['test_recall_micro'].mean(), scores2['test_recall_micro'].std()]
-                    # scores2['test_f1_macro'] = [scores2['test_f1_macro'].mean(), scores2['test_f1_macro'].std()]
-                    # scores2['test_f1_micro'] = [scores2['test_f1_micro'].mean(), scores2['test_f1_micro'].std()]
-                    # scores2['test_accuracy'] = [scores2['test_accuracy'].mean(), scores2['test_accuracy'].std()]
 
                     for x, y in scores2_clf.items():
-                        list = []
+                        list_clf = []
                         for j in y:
                             print(j)
-                            list.append(round(j, 4))
-                        scores2_clf[x] = list
+                            list_clf.append(round(j, 4))
+                        scores2_clf[x] = list_clf
 
                     context = {'scores2_clf': scores2_clf}
-                    print(scores2_clf)
-                    
-                        
-                    
-                    # print(f"Precision mean {scores['test_precision_macro'].mean()}")
-                    # print(f"Precision std {scores['test_precision_macro'].std()}")
-                    # print(f"Recall mean {scores['test_recall_macro'].mean()}")
-                    # print(f"Recall std {scores['test_recall_macro'].std()}")
-                    # print(f"Accuracy mean {scores['test_accuracy'].mean()}")
-                    # print(f"Accuracy std {scores['test_accuracy'].std()}")
-                # scores2 = cross_validate(pipe, X, y, cv=cv, scoring=scoring)
-
-                # print(scores2.keys())
-                # print(scores2)
             
+            # możliwość zapisania modelu w bazie danych
             if request.method == 'POST':
                 filename = request.POST['filename']             
                 file = "documents/user_" + str(request.user.id) + "/models/" + filename + ".pickle"
@@ -651,11 +701,10 @@ def compute(request):
 
             return render(request, 'compute.html', context)
         else:
-            messages.success(request, "No data")
+            messages.success(request, "Dodaj estymator i metodę podziału danych")
             return render(request, 'compute.html', {}) 
-        # return render(request, 'compute.html', {})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def show_models(request):
@@ -666,7 +715,7 @@ def show_models(request):
         models = MLModel.objects.filter(user=request.user)
         return render(request, 'models_list.html', {'models': models})
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def download_model(request, pk):
@@ -682,10 +731,10 @@ def download_model(request, pk):
                 response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(filename)
                 return response
         # raise Http404
-        messages.success(request, "You have successfully download file!")
+        messages.success(request, "Pomyślnie pobrano plik!")
         return redirect('experiment')
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
         return redirect('home')
 
 def delete_model(request, pk):
@@ -698,8 +747,75 @@ def delete_model(request, pk):
         if filename:
             to_delete.delete()
             os.remove(filename)
-            messages.success(request, "You have successfully removed file!")
+            messages.success(request, "Pomyślnie usunięto plik!")
         return redirect('experiment')
     else:
-        messages.success(request, "You need to log in first")
+        messages.success(request, "Zaloguj się")
+        return redirect('home')
+
+def transformer_up(request):
+    """
+    desc
+    """
+    if request.user.is_authenticated:
+        transformer_list = request.session['my_pipeline']
+        pos = int(request.GET.get('pos'))
+        switch_up(transformer_list, pos)
+        request.session['my_pipeline'] = transformer_list
+        return redirect('experiment')
+    else:
+        messages.success(request, "Zaloguj się")
+        return redirect('home')
+    
+def transformer_down(request):
+    """
+    desc
+    """
+    if request.user.is_authenticated:
+        transformer_list = request.session['my_pipeline']
+        pos = int(request.GET.get('pos'))
+        switch_down(transformer_list, pos)
+        request.session['my_pipeline'] = transformer_list
+        return redirect('experiment')
+    else:
+        messages.success(request, "Zaloguj się")
+        return redirect('home')
+    
+def delete_step(request):
+    """
+    desc
+    """
+    if request.user.is_authenticated:
+        transformer_list = request.session['my_pipeline']
+        if len(transformer_list) > 1:
+            pos = int(request.GET.get('pos'))
+            transformer_list.pop(pos)
+            request.session['my_pipeline'] = transformer_list
+        else:
+            del request.session['my_pipeline']
+        return redirect('experiment')
+    else:
+        messages.success(request, "Zaloguj się")
+        return redirect('home')
+    
+def delete_est(request):
+    """
+    desc
+    """
+    if request.user.is_authenticated:
+        del request.session['my_estimator']
+        return redirect('experiment')
+    else:
+        messages.success(request, "Zaloguj się")
+        return redirect('home')
+
+def delete_ev(request):
+    """
+    desc
+    """
+    if request.user.is_authenticated:
+        del request.session['my_evaluation']
+        return redirect('experiment')
+    else:
+        messages.success(request, "Zaloguj się")
         return redirect('home')

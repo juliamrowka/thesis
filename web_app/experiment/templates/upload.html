@@ -6,10 +6,10 @@
   {% if documents %}
   <table class="table table-hover ">
     <thead>
-      <td>Document path</td>
-      <td>Description</td>
-      <td>Uploaded at</td>
-      <td>Action</td>
+      <td>Nazwa pliku</td>
+      <td>Opis</td>
+      <td>Data wgrania</td>
+      <td>Akcje</td>
     </thead>
     <tbody class="table-group-divider">
       {% for document in documents %}
@@ -42,25 +42,27 @@
         <td>{{ document.uploaded_at }}</td>
         <!-- <td><a class="btn btn-danger" role="button" href="{% url 'delete-file' document.id %}" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Delete</a></td> -->
         <!-- <td><a href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Delete</a></td> -->
-        <td><a href="{% url 'delete-file' document.id %}"> Delete</a></td>
+        <td><a href="{% url 'delete-file' document.id %}">Usuń</a></td>
       </tr>
       {% endfor %}
     </tbody>
 
   </table>
   {% else %}
-  <p>No documents</p>
+  <p>Brak plików</p>
   {% endif %}
   <div class="row flex-shrink-0 p-3">
     <div class="col-5 mx-auto">
-      <h1>Upload File</h1>
+      <h1>Prześlij plik</h1>
+      <hr>
+      <p>Plik który przesyłasz powinien mieć rozszerzenie .xlsx. W pierwszym wierszu tabeli powinny znajdować się nagłówki kolumn. Ostatnią kolumną w tabeli powinna być kolumna decyzyjna (Y).</p>
       <br />
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-secondary">Upload</button>
+        <button type="submit" class="btn btn-secondary">Prześlij</button>
       </form>
-      <p><a href="{% url 'home' %}">Return to home</a></p>
+      <p><a href="{% url 'home' %}">Wróć do strony głównej</a></p>
     </div>
   </div>
 </div>

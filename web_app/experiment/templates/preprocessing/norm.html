@@ -8,21 +8,24 @@
         <div class="col-5 mx-auto">
             <h2>Normalizer</h2>
             <hr>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non nihil quisquam impedit asperiores
-                perferendis possimus aut nostrum. Fugit, ipsum autem asperiores praesentium omnis repellendus maxime
-                dignissimos consectetur veniam quo cum.</p>
+            <p>Normalizuje próbki indywidualnie do normy jednostkowej.</p>
+            <p>Każda próbka (tj. każdy wiersz macierzy danych) z co najmniej jednym składnikiem niezerowym jest
+                przeskalowywana niezależnie od innych próbek, tak aby jej norma (l1, l2 lub inf) była równa jeden. 
+                <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.Normalizer.html#sklearn.preprocessing.Normalizer">Zobacz więcej..</a>
+            </p>
             <form method="POST" action="{% url 'norm' %}">
                 {% csrf_token %}
                 <div class="mb-3">
                     <select class="form-select" name="norm_type" required>
-                        <option selected>Choose norm</option>
+                        <option selected>Wybierz normę</option>
                         <option value="l1">l1</option>
                         <option value="l2">l2</option>
                         <option value="max">max</option>
                     </select>
+                    <br />
                 </div>
                 <br />
-                <button type="submit" class="btn btn-secondary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
             </form>
         </div>
