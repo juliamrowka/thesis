@@ -40,7 +40,6 @@ INSTALLED_APPS = [
 
     'debug_toolbar',
     
-    'polls.apps.PollsConfig',
     'crm.apps.CrmConfig',
     'experiment.apps.ExperimentConfig'
 ]
