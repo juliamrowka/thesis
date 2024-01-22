@@ -3,31 +3,28 @@
 {% block content %}
 
 
-<div class="container-fluid p-3">
-    <div class="row flex-shrink-0 p-3">
-        <div class="col-5 mx-auto">
-            <h2>DecisionTreeClassifier</h2>
-            <hr>
-            <p>Klasyfikator drzewa decyzyjnego. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html#sklearn.tree.DecisionTreeClassifier">Zobacz więcej..</a></p>
-            <form method="POST" action="{% url 'decision-tree-classification' %}">
-                {% csrf_token %}
+<div class="container-fluid">
+    <div class="row m-3">
+        <h2>DecisionTreeClassifier</h2>
+        <hr>
+        <p>Klasyfikator drzewa decyzyjnego. <a
+                href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html#sklearn.tree.DecisionTreeClassifier">Zobacz
+                więcej..</a></p>
+        <form method="POST" action="{% url 'decision-tree-classification' %}">
+            {% csrf_token %}
 
-                <div class="mb-3">
-                    <select class="form-select" name="criterion" required>
-                        <option selected>Kryterium</option>
-                        <option value="gini">Gini</option>
-                        <option value="entropy">Entropy</option>
-                        <option value="log_loss">Log_loss</option>
-                    </select>
-                    <br/>
-                    <input class="form-control" type="number" placeholder="Parametr max_leaf_nodes" name="max_leaf_nodes"></input>
-                    <br/>
-                </div>
-                <br/>
-                <button type="submit" class="btn btn-secondary">Prześlij</button>
-
-            </form>
-        </div>
+            <div class="mb-3">
+                <select class="form-select" name="criterion" required>
+                    <option value="gini" selected>Kryterium</option>
+                    <option value="gini">Gini</option>
+                    <option value="entropy">Entropy</option>
+                    <option value="log_loss">Log_loss</option>
+                </select>
+                <br />
+                <input class="form-control" type="number" placeholder="Parametr max_leaf_nodes" name="max_leaf_nodes" required></input>
+            </div>
+            <button type="submit" class="btn btn-secondary">Dodaj</button>
+        </form>
     </div>
 </div>
 

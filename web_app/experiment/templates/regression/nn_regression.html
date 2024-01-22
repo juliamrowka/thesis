@@ -2,10 +2,8 @@
 
 {% block content %}
 
-
-<div class="container-fluid p-3">
-    <div class="row flex-shrink-0 p-3">
-        <div class="col-5 mx-auto">
+<div class="container-fluid">
+    <div class="row m-3">
             <h2>KNeighborsRegressor</h2>
             <hr>
             <p>Regresja oparta na k-najbliższych sąsiadach.</p>
@@ -16,22 +14,12 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input class="form-control" type="number" placeholder="Liczba sąsiadów" name="neighbors"></input>
-                    <br/>
-                    <!-- <br/> -->
-                    <!-- <select class="form-select" name="weight" required>
-                        <option selected>Weight function</option>
-                        <option value="uniform">Uniform</option>
-                        <option value="distance">Distance</option>
-                    </select>
-                    <br/>
-                    <input class="form-control" type="number" placeholder="P parameter" name="p_parameter"></input> -->
+                    <input class="form-control" type="number" placeholder="Liczba sąsiadów" name="neighbors" required></input>
                 </div>
-                <br/>
-                <button type="submit" class="btn btn-secondary">Prześlij</button>
+
+                <button type="submit" class="btn btn-secondary">Dodaj</button>
 
             </form>
-        </div>
     </div>
 </div>
 

@@ -3,25 +3,23 @@
 {% block content %}
 
 
-<div class="container-fluid p-3">
-    <div class="row flex-shrink-0 p-3">
-        <div class="col-5 mx-auto">
-            <h2>Walidacja krzyżowa</h2>
-            <hr>
-            <p>Ocenia metryki za pomocą walidacji krzyżowej oraz rejestruje czasy dopasowania/wyników. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_validate.html#sklearn.model_selection.cross_validate">Zobacz więcej..</a></p>
-            <form method="POST" action="{% url 'cross-validation' %}">
-                {% csrf_token %}
+<div class="container-fluid">
+    <div class="row m-3">
+        <h2>Walidacja krzyżowa</h2>
+        <hr>
+        <p>Ocenia metryki za pomocą walidacji krzyżowej oraz rejestruje czasy dopasowania/wyników. <a
+                href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_validate.html#sklearn.model_selection.cross_validate">Zobacz
+                więcej..</a></p>
+        <form method="POST" action="{% url 'cross-validation' %}">
+            {% csrf_token %}
 
+            <div class="mb-3">
                 <div class="mb-3">
-                    <div class="mb-3">
-                        <input class="form-control" type="number" placeholder="Liczba podzbiorów" name="cv" required></input>
-                    </div>
+                    <input class="form-control" type="number" placeholder="Liczba podzbiorów" name="cv" required></input>
                 </div>
-                <br />
-                <button type="submit" class="btn btn-secondary">Prześlij</button>
-
-            </form>
-        </div>
+            </div>
+            <button type="submit" class="btn btn-secondary">Dodaj</button>
+        </form>
     </div>
 </div>
 

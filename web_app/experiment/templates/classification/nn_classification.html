@@ -2,10 +2,8 @@
 
 {% block content %}
 
-
-<div class="container-fluid p-3">
-    <div class="row flex-shrink-0 p-3">
-        <div class="col-5 mx-auto">
+<div class="container-fluid">
+    <div class="row m-3">
             <h2>KNeighborsClassifier</h2>
             <hr>
             <p>Klasyfikator realizujący głosowanie k-najbliższych sąsiadów. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html#sklearn-neighbors-kneighborsclassifier">Zobacz więcej..</a></p>
@@ -13,9 +11,7 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input class="form-control" type="number" placeholder="Liczba sąsiadów" name="neighbors"></input>
-                    <br/>
-
+                    <input class="form-control" type="number" placeholder="Liczba sąsiadów" name="neighbors" required></input>
                     <!-- <br/> -->
                     <!-- <select class="form-select" name="weight" required>
                         <option selected>Weight function</option>
@@ -25,11 +21,9 @@
                     <br/>
                     <input class="form-control" type="number" placeholder="P parameter" name="p_parameter"></input> -->
                 </div>
-                <br/>
-                <button type="submit" class="btn btn-secondary">Prześlij</button>
 
+                <button type="submit" class="btn btn-secondary">Dodaj</button>
             </form>
-        </div>
     </div>
 </div>
 

@@ -2,29 +2,48 @@
 
 {% block content %}
 
-<div class="col-md-6 offset-md-3">
+<div class="container-fluid">
     {% if user.is_authenticated %}
-
-    <h1>Strona główna</h1>
+    <div class="row m-3">
+        <h1>Dzień dobry, {{user.first_name}}!</h1>
+        <hr>
+        <p>Ta aplikacja została stworzona, aby ułatwić proces tworzenia modelu uczenia maszynowego. Aby
+            rozpocząć kliknij przycik <strong>'Rozpocznij eksperyment'</strong>, który znajduje się na górnym pasku.</p>
+        <ol class="list-group list-group-numbered">
+            <li class="list-group-item"><span>Wybierz źródło danych na podstawie których chcesz stworzyć swój model. Powninien być to plik o
+                rozszerzeniu .xlsx. Zadbaj o to, aby nagłówki kolumn znajdowały się w pierwszym wierszu, a kolumna
+                decyzyjna była ostatnią kolumną w tabeli.</span></li>
+            <li class="list-group-item"><span>Dodaj wybrane transformacje. Możesz dodać ich kilka, zmieniać ich kolejność i usuwać.</span></li>
+            <li class="list-group-item"><span>Dodaj wybrany estymator. Pamiętaj, że od rodzaju danych zależy to, czy powinieneś
+                wybrać estymator do klasyfikacji czy regresji.</span></li>
+            <li class="list-group-item"><span>Dodaj metodę podziału danych. Wybierz między prostym podziałem procentowym, a walidacją
+                krzyżową.</span></li>
+            <li class="list-group-item"><span>Kliknij przycisk <strong>'Wykonaj'</strong>, aby zobaczyć ocenę swojego modelu.</span></li>
+            <li class="list-group-item"><span>Stworzony model, możesz zapisać na swoim koncie i pobrać.</span></li>
+        </ol>
+    </div>
 
     {% else %}
 
-    <h1>Zaloguj się</h1>
-    <br />
-    <form method="POST" action="{% url 'home' %}">
-        {% csrf_token %}
+    <div class="row m-3">
+        <h1 class="mb-3">Zaloguj się</h1>
+        <hr>
+        <p>Zaloguj się, aby móc tworzyć modele i zapisywać je na swoim koncie.</p>
+        <form method="POST" action="{% url 'home' %}">
+            {% csrf_token %}
 
-        <div class="mb-3">
-            <input type="text" class="form-control" name="username" placeholder="Nazwa użytkownika" required>
-        </div>
-        <div class="mb-3">
-            <input type="password" class="form-control" name="password" placeholder="Hasło" required>
-        </div>
-        <br/>
-        <button type="submit" class="btn btn-secondary">Zaloguj</button>
-
-    </form>
-
+            <div class="mb-3">
+                <input type="text" class="form-control" name="username" placeholder="Nazwa użytkownika" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" name="password" placeholder="Hasło" required>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-secondary mb-3">Zaloguj</button>
+                <a href="{% url 'register' %}">Nie masz jeszcze konta? Stwórz je!</a>
+            </div>
+        </form>
+    </div>
     {% endif %}
 
 </div>

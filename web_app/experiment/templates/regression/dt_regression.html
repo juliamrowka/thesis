@@ -3,9 +3,8 @@
 {% block content %}
 
 
-<div class="container-fluid p-3">
-    <div class="row flex-shrink-0 p-3">
-        <div class="col-5 mx-auto">
+<div class="container-fluid">
+    <div class="row m-3">
             <h2>DecisionTreeRegressor</h2>
             <hr>
             <p>Regresor drzewa decyzyjnego. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html#sklearn.tree.DecisionTreeRegressor">Zobacz więcej..</a></p>
@@ -14,29 +13,18 @@
 
                 <div class="mb-3">
                     <select class="form-select" name="criterion" required>
-                        <option selected>Kryterium</option>
+                        <option value="squared_error" selected>Kryterium</option>
                         <option value="squared_error">Squared error</option>
                         <option value="friedman_mse">Friedman mse</option>
                         <option value="absolute_error">Absolute error</option>
                         <option value="poisson">Poisson</option>
                     </select>
                     <br/>
-                    <input class="form-control" type="number" placeholder="Parametr max_leaf_nodes" name="max_leaf_nodes"></input>
-                    <br/>
-                    <!-- <br/> -->
-                    <!-- <select class="form-select" name="weight" required>
-                        <option selected>Weight function</option>
-                        <option value="uniform">Uniform</option>
-                        <option value="distance">Distance</option>
-                    </select>
-                    <br/>
-                    <input class="form-control" type="number" placeholder="P parameter" name="p_parameter"></input> -->
+                    <input class="form-control" type="number" placeholder="Parametr max_leaf_nodes" name="max_leaf_nodes" required></input>
                 </div>
-                <br/>
-                <button type="submit" class="btn btn-secondary">Prześlij</button>
+                <button type="submit" class="btn btn-secondary">Dodaj</button>
 
             </form>
-        </div>
     </div>
 </div>
 

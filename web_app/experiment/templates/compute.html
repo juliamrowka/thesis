@@ -2,229 +2,207 @@
 
 {% block content %}
 
-<div class="container-fluid p-3">
-  <h1>Wyniki</h1>
-  <hr>
-  <!-- 
-  {% if excel_data %}
-  <div class="row">
-    <div class="accordion" id="accordionPanelsStayOpenExample">
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse"
-            data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
-            aria-controls="panelsStayOpen-collapseOne">
-            <div>Źródło danych: <strong>{{ excel_name }}</strong></div>
-          </button>
-        </h2>
-        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
-          <div class="accordion-body">
-            <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 200px;">
-              <table class="table table-bordered table-condensed table-hover align-middle">
-                {% for row in excel_data %}
-                <tr>
-                  {% for cell in row %}
-                  <th scope="row">{{ cell }}</th>
-                  {% endfor %}
-                </tr>
-                {% endfor %}
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="container-fluid">
+  <div class="row m-3">
+    <h2>Wyniki</h2>
+    <hr>
+    <p>Metody oceny zależą od tego czy wybrany estymator służy do klasyfikacji czy regresji.</p>
   </div>
-  <br />
-  {% endif %} -->
 
   {% if scores1_reg %}
-  <div class="row">
-    <div class="col-md-4 offset-md-4">
-      <table class="table">
-        <tbody>
-          <tr>
-            <th scope="row">Explained variance score</th>
-            <td class="text-center">{{scores1_reg.explained_variance_score}}</td>
-          </tr>
-          <tr>
-            <th scope="row">R2 score</th>
-            <td class="text-center">{{scores1_reg.r2_score}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Mean absolute error</th>
-            <td class="text-center">{{scores1_reg.neg_mean_absolute_error}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Mean squared error</th>
-            <td class="text-center">{{scores1_reg.neg_mean_squared_error}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="row m-3">
+    <table class="table table-hover">
+      <thead>
+        <th>Metoda oceny</th>
+      <th class="text-center">Wynik</th>
+      <th>Wynik</th>
+      </thead>
+      <tbody class="table-group-divider">
+        <tr>
+          <th scope="row">Explained variance score</th>
+          <td class="text-center">{{scores1_reg.explained_variance_score}}</td>
+        </tr>
+        <tr>
+          <th scope="row">R2 score</th>
+          <td class="text-center">{{scores1_reg.r2_score}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Mean absolute error</th>
+          <td class="text-center">{{scores1_reg.neg_mean_absolute_error}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Mean squared error</th>
+          <td class="text-center">{{scores1_reg.neg_mean_squared_error}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   {% endif %}
 
   {% if scores1_clf %}
-  <div class="row">
-    <div class="col-md-4 offset-md-4">
-      <table class="table">
-        <tbody>
-          <tr>
-            <th scope="row">Precision macro</th>
-            <td class="text-center">{{scores1_clf.precision_macro}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Precision micro</th>
-            <td class="text-center">{{scores1_clf.precision_micro}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Recall macro</th>
-            <td class="text-center">{{scores1_clf.recall_macro}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Recall micro</th>
-            <td class="text-center">{{scores1_clf.recall_micro}}</td>
-          </tr>
-          <tr>
-            <th scope="row">F1 macro</th>
-            <td class="text-center">{{scores1_clf.f1_macro}}</td>
-          </tr>
-          <tr>
-            <th scope="row">F1 micro</th>
-            <td class="text-center">{{scores1_clf.f1_micro}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Accuracy</th>
-            <td class="text-center">{{scores1_clf.accuracy}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="row m-3">
+    <table class="table table-hover">
+      <th>Metoda oceny</th>
+      <th class="text-center">Wynik</th>
+      <tbody class="table-group-divider">
+        <tr>
+          <th scope="row">Precision macro</th>
+          <td class="text-center">{{scores1_clf.precision_macro}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Precision micro</th>
+          <td class="text-center">{{scores1_clf.precision_micro}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Recall macro</th>
+          <td class="text-center">{{scores1_clf.recall_macro}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Recall micro</th>
+          <td class="text-center">{{scores1_clf.recall_micro}}</td>
+        </tr>
+        <tr>
+          <th scope="row">F1 macro</th>
+          <td class="text-center">{{scores1_clf.f1_macro}}</td>
+        </tr>
+        <tr>
+          <th scope="row">F1 micro</th>
+          <td class="text-center">{{scores1_clf.f1_micro}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Accuracy</th>
+          <td class="text-center">{{scores1_clf.accuracy}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   {% endif %}
 
   {% if scores2_reg %}
-  <div class="row">
-    <div class="col-md-4 offset-md-4">
-      <table class="table">
-        <tbody>
-          <tr>
-            <th scope="row">Explained variance score</th>
-            <td class="text-center">{{scores2_reg.test_explained_variance.0}}</td>
-            <td class="text-center">{{scores2_reg.test_explained_variance.1}}</td>
-          </tr>
-          <tr>
-            <th scope="row">R2 score</th>
-            <td class="text-center">{{scores2_reg.test_r2.0}}</td>
-            <td class="text-center">{{scores2_reg.test_r2.1}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Mean absolute error</th>
-            <td class="text-center">{{scores2_reg.test_neg_mean_absolute_error.0}}</td>
-            <td class="text-center">{{scores2_reg.test_neg_mean_absolute_error.1}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Mean squared error</th>
-            <td class="text-center">{{scores2_reg.test_neg_mean_squared_error.0}}</td>
-            <td class="text-center">{{scores2_reg.test_neg_mean_squared_error.1}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="row m-3">
+    <table class="table table-hover">
+      <th>Metoda oceny</th>
+      <th class="text-center">Uśredniony wynik</th>
+      <th class="text-center">Odchylenie standardowe</th>
+      <tbody class="table-group-divider">
+        <tr>
+          <th scope="row">Explained variance score</th>
+          <td class="text-center">{{scores2_reg.test_explained_variance.0}}</td>
+          <td class="text-center">{{scores2_reg.test_explained_variance.1}}</td>
+        </tr>
+        <tr>
+          <th scope="row">R2 score</th>
+          <td class="text-center">{{scores2_reg.test_r2.0}}</td>
+          <td class="text-center">{{scores2_reg.test_r2.1}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Mean absolute error</th>
+          <td class="text-center">{{scores2_reg.test_neg_mean_absolute_error.0}}</td>
+          <td class="text-center">{{scores2_reg.test_neg_mean_absolute_error.1}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Mean squared error</th>
+          <td class="text-center">{{scores2_reg.test_neg_mean_squared_error.0}}</td>
+          <td class="text-center">{{scores2_reg.test_neg_mean_squared_error.1}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   {% endif %}
 
   {% if scores2_clf %}
-  <div class="row">
-    <div class="col-md-4 offset-md-4">
-      <table class="table">
-        <tbody>
-          <tr>
-            <th scope="row">Precision macro</th>
-            <td class="text-center">{{scores2_clf.test_precision_macro.0}}</td>
-            <td class="text-center">{{scores2_clf.test_precision_macro.1}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Precision micro</th>
-            <td class="text-center">{{scores2_clf.test_precision_micro.0}}</td>
-            <td class="text-center">{{scores2_clf.test_precision_micro.1}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Recall macro</th>
-            <td class="text-center">{{scores2_clf.test_recall_macro.0}}</td>
-            <td class="text-center">{{scores2_clf.test_recall_macro.1}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Recall micro</th>
-            <td class="text-center">{{scores2_clf.test_recall_micro.0}}</td>
-            <td class="text-center">{{scores2_clf.test_recall_micro.1}}</td>
-          </tr>
-          <tr>
-            <th scope="row">F1 macro</th>
-            <td class="text-center">{{scores2_clf.test_f1_macro.0}}</td>
-            <td class="text-center">{{scores2_clf.test_f1_macro.1}}</td>
-          </tr>
-          <tr>
-            <th scope="row">F1 micro</th>
-            <td class="text-center">{{scores2_clf.test_f1_micro.0}}</td>
-            <td class="text-center">{{scores2_clf.test_f1_micro.1}}</td>
-          </tr>
-          <tr>
-            <th scope="row">Accuracy</th>
-            <td class="text-center">{{scores2_clf.test_accuracy.0}}</td>
-            <td class="text-center">{{scores2_clf.test_accuracy.1}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="row m-3">
+    <table class="table table-hover">
+      <th>Metoda oceny</th>
+      <th class="text-center">Uśredniony wynik</th>
+      <th class="text-center">Odchylenie standardowe</th>
+      <tbody class="table-group-divider">
+        <tr>
+          <th scope="row">Precision macro</th>
+          <td class="text-center">{{scores2_clf.test_precision_macro.0}}</td>
+          <td class="text-center">{{scores2_clf.test_precision_macro.1}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Precision micro</th>
+          <td class="text-center">{{scores2_clf.test_precision_micro.0}}</td>
+          <td class="text-center">{{scores2_clf.test_precision_micro.1}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Recall macro</th>
+          <td class="text-center">{{scores2_clf.test_recall_macro.0}}</td>
+          <td class="text-center">{{scores2_clf.test_recall_macro.1}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Recall micro</th>
+          <td class="text-center">{{scores2_clf.test_recall_micro.0}}</td>
+          <td class="text-center">{{scores2_clf.test_recall_micro.1}}</td>
+        </tr>
+        <tr>
+          <th scope="row">F1 macro</th>
+          <td class="text-center">{{scores2_clf.test_f1_macro.0}}</td>
+          <td class="text-center">{{scores2_clf.test_f1_macro.1}}</td>
+        </tr>
+        <tr>
+          <th scope="row">F1 micro</th>
+          <td class="text-center">{{scores2_clf.test_f1_micro.0}}</td>
+          <td class="text-center">{{scores2_clf.test_f1_micro.1}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Accuracy</th>
+          <td class="text-center">{{scores2_clf.test_accuracy.0}}</td>
+          <td class="text-center">{{scores2_clf.test_accuracy.1}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   {% endif %}
 
 
 
-  <div class="row flex-shrink-0 p-3">
-    <div class="col-md-6 mx-auto">
-      <form method="POST" action="{% url 'compute' %}">
-        {% csrf_token %}
-        <div class="mb-3">
-          <div class="d-flex justify-content-between">
-            <div class="input-group">
-              <input type="text" class="form-control" name="filename" placeholder="Nazwa pliku"
-                aria-describedby="basic-addon" required>
-              <span class="input-group-text" id="basic-addon">.pickle</span>
-            </div>
-            <button type="submit" class="btn btn-secondary mx-2">Zapisz</button>
+  <div class="row m-3">
+    <h2>Zapisz model</h2>
+    <hr>
+    <p>Możesz zapisać swój model w aplikacji, aby później go pobrać na swoje urządzenie.</p>
+    <form method="POST" action="{% url 'compute' %}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <div class="d-flex justify-content-between">
+          <div class="input-group">
+            <input type="text" class="form-control" name="filename" placeholder="Nazwa pliku"
+              aria-describedby="basic-addon" required>
+            <span class="input-group-text" id="basic-addon">.pickle</span>
           </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6 mx-auto">
-      <h3>Instrukcja korzystania z modelu</h3>
-      <div>Przykładowy kod:</div>
-      <br />
-      <div class="border rounded p-3 bg-light">
-        <div><code class="text-secondary"># zaimportuj potrzebne paczki</code></div>
-        <div><code>import pandas as pd</code></div>
-        <div><code>from sklearn import metrics</code></div>
-        <div><code>import pickle</code></div>
-        <br />
-        <div><code class="text-secondary"># zaimportuj zbiór danych dla których chcesz zastosować model</code></div>
-        <div><code>dataset = pd.read_excel('your_filename.xlsx') </code></div>
-        <br />
-        <div><code>X = dataset.iloc[:, : -1].values </code></div>
-        <div><code>Y = dataset.iloc[:, -1].values </code></div>
-        <br />
-        <div><code class="text-secondary"># załaduj pobrany model</code></div>
-        <div><code>with open('your_model.pickle', 'rb') as f:</code></div>
-        <div><code>&nbsp;&nbsp;&nbsp;&nbsp;load_model = pickle.load(f)</code></div>
-        <br />
-        <div><code>y_pred = load_model.predict(X) </code></div>
-        <div><code>print('root mean squared error : ', metrics.r2_score(Y, y_pred)) </code></div>
+          <button type="submit" class="btn btn-secondary mx-2">Zapisz</button>
+        </div>
       </div>
-    </div>
+    </form>
   </div>
 
-  {% endblock %}
+  <div class="row m-3">
+    <h2>Instrukcja korzystania z modelu</h2>
+    <hr>
+    <p>Poniżej znajduje się przykładowy kod w języku python, dzięki któremu wykorzystasz pobrany model:</p>
+    <div class="border rounded p-3 bg-light">
+      <div><code class="text-secondary"># zaimportuj potrzebne biblioteki</code></div>
+      <div><code>import pandas as pd</code></div>
+      <div><code>from sklearn import metrics</code></div>
+      <div><code>import pickle</code></div>
+      <br />
+      <div><code class="text-secondary"># zaimportuj zbiór danych dla których chcesz zastosować model</code></div>
+      <div><code>dataset = pd.read_excel('your_filename.xlsx') </code></div>
+      <br />
+      <div><code>X = dataset.values </code></div>
+      <br />
+      <div><code class="text-secondary"># załaduj pobrany model</code></div>
+      <div><code>with open('your_model.pickle', 'rb') as f:</code></div>
+      <div><code>&nbsp;&nbsp;&nbsp;&nbsp;load_model = pickle.load(f)</code></div>
+      <br />
+      <div><code>y_pred = load_model.predict(X) </code></div>
+      <div><code>print(y_pred) </code></div>
+    </div>
+  </div>
+  
+
+</div>
+
+{% endblock %}

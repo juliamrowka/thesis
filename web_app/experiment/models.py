@@ -1,13 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
 def user_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return f'documents/user_{instance.user.id}/data/{filename}'
 
 def user_directory_path_models(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return f'documents/user_{instance.user.id}/models/{filename}'
 
 class Document(models.Model):

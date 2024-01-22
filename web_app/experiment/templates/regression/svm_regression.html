@@ -3,9 +3,8 @@
 {% block content %}
 
 
-<div class="container-fluid p-3">
-    <div class="row flex-shrink-0 p-3">
-        <div class="col-5 mx-auto">
+<div class="container-fluid">
+    <div class="row m-3">
             <h2>LinearSVR</h2>
             <hr>
             <p>Regresja liniowego wektora nośnego. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVR.html#sklearn.svm.LinearSVR">Zobacz więcej..</a></p>
@@ -13,27 +12,16 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <input class="form-control" type="number" step="any" placeholder="Parametr epsilon" name="epsilon"></input>
+                    <input class="form-control" type="number" step="any" placeholder="Parametr epsilon" name="epsilon" required></input>
                     <br/>
-                    <input class="form-control" type="number" step="any" placeholder="Parametr regularyzacji C" name="C_parameter"></input>
+                    <input class="form-control" type="number" step="any" placeholder="Parametr regularyzacji C" name="C_parameter" required></input>
                     <br/>
-                    <input class="form-control" type="number" step="any" placeholder="Parametr intercept_scaling" name="intercept_scaling"></input>
-                    <br/>
-                    <!-- <select class="form-select" name="calculate_intercept" required>
-                        <option selected>Calculate intercept</option>
-                        <option value="True">True</option>
-                        <option value="False">False</option>
-                    </select>
-                    <br/>
-                    <input class="form-control" type="number" placeholder="Random state" name="random"></input>
-                    <br/>
-                    <input class="form-control" type="number" placeholder="Maximum number of iterations" name="iter_max"></input> -->
+                    <input class="form-control" type="number" step="any" placeholder="Parametr intercept_scaling" name="intercept_scaling" required></input>
                 </div>
-                <br/>
-                <button type="submit" class="btn btn-secondary">Prześlij</button>
+
+                <button type="submit" class="btn btn-secondary">Dodaj</button>
 
             </form>
-        </div>
     </div>
 </div>
 

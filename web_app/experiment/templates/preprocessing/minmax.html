@@ -3,9 +3,8 @@
 {% block content %}
 
 
-<div class="container-fluid p-3">
-    <div class="row flex-shrink-0 p-3">
-        <div class="col-5 mx-auto">
+<div class="container-fluid">
+    <div class="row m-3">
             <h2>MinMaxScaler</h2>
             <hr>
             <p>Przekształca cechy poprzez skalowanie każdej cechy do danego zakresu. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html#sklearn.preprocessing.MinMaxScaler">Zobacz więcej..</a></p>
@@ -14,17 +13,15 @@
 
                 <div class="mb-3">
                     <select class="form-select" name="choosen_column" required>
-                        <option selected>Wybierz kolumnę</option>
+                        <option value="0" selected>Wybierz kolumnę</option>
                         {% for i in max_column %}
                         <option value="{{i}}">{{i}}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <br />
-                <button type="submit" class="btn btn-secondary">Prześlij</button>
+                <button type="submit" class="btn btn-secondary">Dodaj</button>
 
             </form>
-        </div>
     </div>
 </div>
 

@@ -3,17 +3,21 @@
 {% block content %}
 
 
-<div class="container-fluid p-3">
-    <div class="row flex-shrink-0 p-3">
-        <div class="col-5 mx-auto">
-            <h1>Dodaj transformację</h1>
-            <br />
-            <div class="row d-grid gap-3">
-                <a class="btn btn-outline-secondary" href="{% url 'std' %}" role="button">StandardScaler</a>
-                <a class="btn btn-outline-secondary" href="{% url 'minmax' %}" role="button">MinMaxScaler</a>
-                <a class="btn btn-outline-secondary" href="{% url 'norm' %}" role="button">Normalizer</a>
-                <!-- <a class="btn btn-outline-secondary" href="" role="button">PCA</a> -->
-            </div>
+<div class="container-fluid">
+    <div class="row m-3">
+        <h2>Dodaj transformację</h2>
+        <hr>
+        <p>Wybierz transformację, której chcesz użyć dla swojego zbioru danych. Wstępne przetwarzanie danych umożliwia
+            przedstawienie cech w sposób odpowiadający dalszym estymatorom.
+            <a href="https://scikit-learn.org/stable/modules/preprocessing.html#preprocessing">Zobacz więcej..</a>
+        </p>
+    </div>
+    <div class="row m-3">
+        <div class="row d-grid gap-3">
+            <a class="btn btn-outline-secondary" href="{% url 'std' %}" role="button">StandardScaler</a>
+            <a class="btn btn-outline-secondary" href="{% url 'minmax' %}" role="button">MinMaxScaler</a>
+            <a class="btn btn-outline-secondary" href="{% url 'norm' %}" role="button">Normalizer</a>
+            <a class="btn btn-outline-secondary" href="{% url 'pca' %}" role="button">PCA</a>
         </div>
     </div>
 </div>

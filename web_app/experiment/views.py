@@ -130,7 +130,7 @@ def experiment(request):
     if request.user.is_authenticated:
         if 'filename' in request.session:
             if len(request.session['filename']) > 0:
-                excel_name = str(request.session['filename'])
+                excel_name = os.path.basename(str(request.session['filename']))
                 excel_data = list()
                 wb = op.load_workbook(request.session['filename'])
                 worksheet = wb.active
@@ -180,23 +180,11 @@ def std(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
-            if 'my_column_transformer' not in request.session:
-                request.session['my_column_transformer'] = [['StandardScaler', ('Chosen column: ', int(column))]]
-                # print('just have created pipeline')
-            else:
-                pipe = request.session['my_column_transformer']
-                pipe.append(['StandardScaler', ('Chosen column: ', int(column))])
-                request.session['my_column_transformer'] = pipe
-
-                # print(f'pipe exists: {pipe}')
-                # print(f'pipeline in session {request.session["my_pipeline"]}')
-
-            # test
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['StandardScaler', ('Chosen column: ', int(column))]]
+                request.session['my_pipeline'] = [['StandardScaler', ('Wybrana kolumna: ', int(column))]]
             else:
                 pipe = request.session['my_pipeline']
-                pipe.append(['StandardScaler', ('Chosen column: ', int(column))])
+                pipe.append(['StandardScaler', ('Wybrana kolumna: ', int(column))])
                 request.session['my_pipeline'] = pipe
 
             return redirect('transformer')
@@ -217,23 +205,12 @@ def minmax(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
-            if 'my_column_transformer' not in request.session:
-                request.session['my_column_transformer'] = [['MinMaxScaler', ('Chosen column: ', int(column))]]
-                # print('no pipeline')
-            else:
-                pipe = request.session['my_column_transformer']
-                pipe.append(['MinMaxScaler', ('Chosen column: ', int(column))])
-                request.session['my_column_transformer'] = pipe
-
-                # print(f'pipe exists: {pipe}')
-                # print(f'pipeline in session {request.session["my_pipeline"]}')
-
             # test
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['MinMaxScaler', ('Chosen column: ', int(column))]]
+                request.session['my_pipeline'] = [['MinMaxScaler', ('Wybrana kolumna: ', int(column))]]
             else:
                 pipe = request.session['my_pipeline']
-                pipe.append(['MinMaxScaler', ('Chosen column: ', int(column))])
+                pipe.append(['MinMaxScaler', ('Wybrana kolumna: ', int(column))])
                 request.session['my_pipeline'] = pipe
 
 
@@ -257,15 +234,12 @@ def norm(request):
         if request.method == 'POST':
             norm_type = request.POST['norm_type']
             if 'my_pipeline' not in request.session:
-                request.session['my_pipeline'] = [['Normalizer', ('Norm type: ', norm_type)]]
-                # print('no pipeline')
+                request.session['my_pipeline'] = [['Normalizer', ('Norma: ', norm_type)]]
             else:
                 pipe = request.session['my_pipeline']
-                pipe.append(['Normalizer', ('Norm type: ', norm_type)])
+                pipe.append(['Normalizer', ('Norma: ', norm_type)])
                 request.session['my_pipeline'] = pipe
 
-                # print(f'pipe exists: {pipe}')
-                # print(f'pipeline in session {request.session["my_pipeline"]}')
             return redirect('transformer')
         elif 'max_column' in request.session:
             max_column = request.session['max_column']
@@ -277,33 +251,29 @@ def norm(request):
         messages.success(request, "Zaloguj się")
         return redirect('home')
     
-# def pca(request):
-#     """
-#     description
-#     """
-#     if request.user.is_authenticated:
-#         if request.method == 'POST':
-#             parameter_n = request.POST['parameter_n']
-#             if 'my_pipeline' not in request.session:
-#                 request.session['my_pipeline'] = [['PCA', ('Chosen n parameter: ', int(parameter_n))]]
-#                 # print('no pipeline')
-#             else:
-#                 pipe = request.session['my_pipeline']
-#                 pipe.append(['PCA', ('Chosen n parameter: ', int(parameter_n))])
-#                 request.session['my_pipeline'] = pipe
+def pca(request):
+    """
+    description
+    """
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            # parameter_n = None
+            if 'my_pipeline' not in request.session:
+                request.session['my_pipeline'] = [['PCA']]
+            else:
+                pipe = request.session['my_pipeline']
+                pipe.append(['PCA'])
+                request.session['my_pipeline'] = pipe
 
-#                 # print(f'pipe exists: {pipe}')
-#                 # print(f'pipeline in session {request.session["my_pipeline"]}')
-#             return redirect('transformer')
-#         elif 'max_column' in request.session:
-#             n_component = request.session['max_column']
-#             return render(request, 'preprocessing/pca.html', {'n_component': n_component})
-#         else:
-#             messages.success(request, "Najpierw wybierz plik")
-#         return redirect('upload')
-#     else:
-#         messages.success(request, "Zaloguj się")
-#         return redirect('home')
+            return redirect('transformer')
+        elif 'filename' in request.session:
+            return render(request, 'preprocessing/pca.html', {})
+        else:
+            messages.success(request, "Najpierw wybierz plik")
+        return redirect('upload')
+    else:
+        messages.success(request, "Zaloguj się")
+        return redirect('home')
     
 def estimator(request):
     """
@@ -319,17 +289,15 @@ def ord_least_squares(request):
     """
     description
     """
-    # if request.user.is_authenticated:
-    #     return render(request, 'ordinary-least-squares.html', {})
-    # else:
-    #     messages.success(request, "Zaloguj się")
-    #     return redirect('home')
     if request.user.is_authenticated:
         if request.method == 'POST':
             request.session['my_estimator'] = [('LinearRegression', 'reg')]
             return redirect('experiment')
+        elif 'filename' in request.session:
+            return render(request, 'regression/ordinary_least_squares.html', {})
         else:
-            return render(request, 'regression/ordinary_least_squares.html', {'max_column': request.session['max_column']})
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload')
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
@@ -343,10 +311,13 @@ def svm_regression(request):
             epsilon = request.POST['epsilon']
             C_parameter = request.POST['C_parameter']
             intercept_scaling = request.POST['intercept_scaling']
-            request.session['my_estimator'] = [('LinearSVR', 'reg'), [('Epsilon: ', epsilon), ('Regularization parameter C: ', C_parameter), ('Intercept scaling: ', intercept_scaling)]]
+            request.session['my_estimator'] = [('LinearSVR', 'reg'), [('Parametr epsilon: ', epsilon), ('Parametr regularyzacji C: ', C_parameter), ('Parametr intercept_scaling: ', intercept_scaling)]]
             return redirect('experiment')
+        elif 'filename' in request.session:
+            return render(request, 'regression/svm_regression.html', {})
         else:
-            return render(request, 'regression/svm_regression.html', {'max_column': request.session['max_column']})
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload')
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
@@ -358,12 +329,13 @@ def nn_regression(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             neighbors = request.POST['neighbors']
-            # weight = request.POST['weight']
-            # p_parameter = request.POST['p_parameter']
-            request.session['my_estimator'] = [('KNeighborsRegressor', 'reg'), [('Number of neighbors: ', neighbors)]]
+            request.session['my_estimator'] = [('KNeighborsRegressor', 'reg'), [('Liczba sąsiadów: ', neighbors)]]
             return redirect('experiment')
+        elif 'filename' in request.session:
+            return render(request, 'regression/nn_regression.html', {})
         else:
-            return render(request, 'regression/nn_regression.html', {'max_column': request.session['max_column']})
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload')            
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
@@ -376,10 +348,13 @@ def dt_regression(request):
         if request.method == 'POST':
             criterion = request.POST['criterion']
             max_leaf_nodes = request.POST['max_leaf_nodes']
-            request.session['my_estimator'] = [('DecisionTreeRegressor', 'reg'), [('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes)]]
+            request.session['my_estimator'] = [('DecisionTreeRegressor', 'reg'), [('Kryterium: ', criterion), ('Parametr max_leaf_nodes: ', max_leaf_nodes)]]
             return redirect('experiment')
+        elif 'filename' in request.session:
+            return render(request, 'regression/dt_regression.html', {})
         else:
-            return render(request, 'regression/dt_regression.html', {'max_column': request.session['max_column']})
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload')            
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
@@ -391,10 +366,13 @@ def categorical_nb(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             alpha = request.POST['alpha']
-            request.session['my_estimator'] = [('CategoricalNB', 'clf'), [('Alpha: ', alpha)]]
+            request.session['my_estimator'] = [('CategoricalNB', 'clf'), [('Parametr alpha: ', alpha)]]
             return redirect('experiment')
+        elif 'filename' in request.session:
+            return render(request, 'classification/categorical_nb.html', {})
         else:
-            return render(request, 'classification/categorical_nb.html', {'max_column': request.session['max_column']})
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload')    
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
@@ -408,10 +386,13 @@ def svm_classification(request):
             c_parameter = request.POST['c_parameter']
             if request.POST['class_weight'] == 'None': class_weight = None
             else: class_weight = request.POST['class_weight']
-            request.session['my_estimator'] = [('LinearSVC', 'clf'), [('C parameter: ', c_parameter), ('Class weight: ', class_weight)]]
+            request.session['my_estimator'] = [('LinearSVC', 'clf'), [('Parametr regularyzacji C: ', c_parameter), ('Parametr class_weight: ', class_weight)]]
             return redirect('experiment')
+        elif 'filename' in request.session:
+            return render(request, 'classification/svm_classification.html', {})
         else:
-            return render(request, 'classification/svm_classification.html', {'max_column': request.session['max_column']})
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload')               
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
@@ -425,10 +406,13 @@ def nn_classification(request):
             neighbors = request.POST['neighbors']
             # weight = request.POST['weight']
             # p_parameter = request.POST['p_parameter']
-            request.session['my_estimator'] = [('KNeighborsClassifier', 'clf'), [('Number of neighbors: ', neighbors)]]
+            request.session['my_estimator'] = [('KNeighborsClassifier', 'clf'), [('Liczba sąsiadów: ', neighbors)]]
             return redirect('experiment')
+        elif 'filename' in request.session:
+            return render(request, 'classification/nn_classification.html', {})
         else:
-            return render(request, 'classification/nn_classification.html', {'max_column': request.session['max_column']})
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload') 
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
@@ -441,10 +425,13 @@ def dt_classification(request):
         if request.method == 'POST':
             criterion = request.POST['criterion']
             max_leaf_nodes = request.POST['max_leaf_nodes']
-            request.session['my_estimator'] = [('DecisionTreeClassifier', 'clf'), [('Criterion: ', criterion), ('Max leaf nodes: ', max_leaf_nodes)]]
+            request.session['my_estimator'] = [('DecisionTreeClassifier', 'clf'), [('Kryterium: ', criterion), ('Parametr max_leaf_nodes: ', max_leaf_nodes)]]
             return redirect('experiment')
+        elif 'filename' in request.session:
+            return render(request, 'classification/dt_classification.html', {})
         else:
-            return render(request, 'classification/dt_classification.html', {'max_column': request.session['max_column']})
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload') 
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
@@ -466,10 +453,13 @@ def random_split(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             test_size = request.POST['test_size']
-            request.session['my_evaluation'] = ['train_test_split', [('test_size: ', test_size)]]
+            request.session['my_evaluation'] = ['Train test split', [('Udział zbioru testowego: ', test_size)]]
             return redirect('experiment')
-        else:
+        elif 'filename' in request.session:
             return render(request, 'evaluation/random_split.html', {})
+        else:
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload')             
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')  
@@ -481,10 +471,13 @@ def cross_validation(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             cv = request.POST['cv']
-            request.session['my_evaluation'] = ['cross_validate', [('cv: ', cv)]]
+            request.session['my_evaluation'] = ['Cross validate', [('Liczba podzbiorów: ', cv)]]
             return redirect('experiment')
-        else:
+        elif 'filename' in request.session:
             return render(request, 'evaluation/cross_validation.html', {})
+        else:
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload')            
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')  
@@ -494,18 +487,13 @@ def compute(request):
     description
     """
     if request.user.is_authenticated:
-        if 'my_estimator' and 'my_evaluation' in request.session:
+        if 'filename' and 'my_estimator' and 'my_evaluation' in request.session:
 
             est = request.session['my_estimator']
             ev = request.session['my_evaluation']
             max_c = request.session['max_column']
             context = {}
             transformer_list = []
-
-            # odczytanie pliku wgranego przez użytkownika oraz wybranej kolumny decyzyjnej - zmiennej celu
-            wb = pd.read_excel(io=request.session['filename'], header=0)
-            # target_column = est[1][len(est[1])-1][1] - 1
-            # print(f'target_column: {target_column}')
 
             # iteracja po elementach tablicy 'my_pipeline' w celu odczytania transformacji i przyłączenia jej do listy
             x = 0
@@ -545,17 +533,14 @@ def compute(request):
                     if i[0] == 'Normalizer': 
                         transformer_list.append((f'ct_norm_{x}', ColumnTransformer([(f'norm_{x}', Normalizer(norm=i[1][1]), [x for x in range(len(max_c))])])))
 
-                    # if i[0] == 'PCA': 
-                    #     # print(max_c)
-                    #     # max_c = list(range(1, i[1][1]+1))
-                    #     # print(max_c)
-                    #     transformer_list.append((f'pca_{x}', PCA(n_components=i[1][1])))
+                    if i[0] == 'PCA': 
+                        # print(max_c)
+                        # max_c = list(range(1, i[1][1]+1))
+                        # print(max_c)
+                        transformer_list.append((f'pca_{x}', PCA()))
 
                     x = x+1
             
-            # pipe_trans = Pipeline(transformer_list.copy())
-            
-
             # odczytywanie wybranego estymatora i przyłączenie go do listy    
             if est[0][0] == 'LinearRegression': transformer_list.append(('linear', LinearRegression()))
             elif est[0][0] == 'LinearSVR': transformer_list.append(('svr', LinearSVR(epsilon=float(est[1][0][1]), C=float(est[1][1][1]), intercept_scaling=float(est[1][2][1]) )))
@@ -567,31 +552,20 @@ def compute(request):
             elif est[0][0] == 'KNeighborsClassifier': transformer_list.append(('knn_class', KNeighborsClassifier(n_neighbors=int(est[1][0][1]) )))
             elif est[0][0] == 'DecisionTreeClassifier': transformer_list.append(('tree_class', DecisionTreeClassifier(criterion=est[1][0][1], max_leaf_nodes=int(est[1][1][1]) )))
 
-
-            # stworzenie ColumnTransformer na podstawie listy 'column_transformer_list'
-            # ct = ColumnTransformer(column_transformer_list, remainder="passthrough")
-
-
-            # stworzenie Pipeline z ColumnTransformer oraz dołączenie transformacji i estymatora z listy 'transformer_list'
-            # pipe = Pipeline([('ct', ct)])
-            # pipe.steps.extend(transformer_list)
-
             # stworzenie Pipeline
             pipe = Pipeline(transformer_list)
-            print(f'pipe: {pipe}')
-            # print(f'pipe trans: {pipe_trans}')
 
+            # odczytanie pliku wgranego przez użytkownika
+            wb = pd.read_excel(io=request.session['filename'], header=0)
 
             # podział danych na x i y (zmienne zależne i zmienną niezależną)
-            # X = wb.iloc[:,[x for x in range(len(wb.columns)) if x!=target_column]]
-            # y = wb.iloc[:, target_column]
             X = wb.iloc[:, : -1] 
             y = wb.iloc[:, -1]
 
             # wybór sposobu podziału danych na zbiór uczący i testujący
 
             # wybór podziału procentowego
-            if ev[0] == 'train_test_split':
+            if ev[0] == 'Train test split':
                 test_size = float(ev[1][0][1])
                 X_train,X_test,y_train,y_test=train_test_split(X, y, test_size=test_size, random_state=0)              
 
@@ -645,7 +619,7 @@ def compute(request):
                     context = {'scores1_clf': scores1_clf}
 
             # wybór podziału krzyżowo-walidacyjnego
-            elif ev[0] == 'cross_validate':
+            elif ev[0] == 'Cross validate':
                 cv = int(ev[1][0][1])
 
                 if est[0][1] == 'reg': 
@@ -700,9 +674,15 @@ def compute(request):
                 return redirect('models')
 
             return render(request, 'compute.html', context)
+        
+        elif 'filename' not in request.session:
+            messages.success(request, "Najpierw wybierz plik")
+            return redirect('upload')  
+        
         else:
             messages.success(request, "Dodaj estymator i metodę podziału danych")
             return render(request, 'compute.html', {}) 
+        
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
@@ -729,8 +709,8 @@ def download_model(request, pk):
             with open(filename, 'rb') as fl:
                 response = HttpResponse(fl.read(), content_type="application/octet-stream")
                 response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(filename)
+                print(os.path.basename(filename))
                 return response
-        # raise Http404
         messages.success(request, "Pomyślnie pobrano plik!")
         return redirect('experiment')
     else:
@@ -758,10 +738,11 @@ def transformer_up(request):
     desc
     """
     if request.user.is_authenticated:
-        transformer_list = request.session['my_pipeline']
-        pos = int(request.GET.get('pos'))
-        switch_up(transformer_list, pos)
-        request.session['my_pipeline'] = transformer_list
+        if 'my_pipeline' in request.session:
+            transformer_list = request.session['my_pipeline']
+            pos = int(request.GET.get('pos'))
+            switch_up(transformer_list, pos)
+            request.session['my_pipeline'] = transformer_list
         return redirect('experiment')
     else:
         messages.success(request, "Zaloguj się")
@@ -772,10 +753,11 @@ def transformer_down(request):
     desc
     """
     if request.user.is_authenticated:
-        transformer_list = request.session['my_pipeline']
-        pos = int(request.GET.get('pos'))
-        switch_down(transformer_list, pos)
-        request.session['my_pipeline'] = transformer_list
+        if 'my_pipeline' in request.session:
+            transformer_list = request.session['my_pipeline']
+            pos = int(request.GET.get('pos'))
+            switch_down(transformer_list, pos)
+            request.session['my_pipeline'] = transformer_list
         return redirect('experiment')
     else:
         messages.success(request, "Zaloguj się")
@@ -786,13 +768,14 @@ def delete_step(request):
     desc
     """
     if request.user.is_authenticated:
-        transformer_list = request.session['my_pipeline']
-        if len(transformer_list) > 1:
-            pos = int(request.GET.get('pos'))
-            transformer_list.pop(pos)
-            request.session['my_pipeline'] = transformer_list
-        else:
-            del request.session['my_pipeline']
+        if 'my_pipeline' in request.session:
+            transformer_list = request.session['my_pipeline']
+            if len(transformer_list) > 1:
+                pos = int(request.GET.get('pos'))
+                transformer_list.pop(pos)
+                request.session['my_pipeline'] = transformer_list
+            else:
+                del request.session['my_pipeline']
         return redirect('experiment')
     else:
         messages.success(request, "Zaloguj się")
@@ -803,7 +786,8 @@ def delete_est(request):
     desc
     """
     if request.user.is_authenticated:
-        del request.session['my_estimator']
+        if 'my_estimator' in request.session:
+            del request.session['my_estimator']
         return redirect('experiment')
     else:
         messages.success(request, "Zaloguj się")
@@ -814,7 +798,8 @@ def delete_ev(request):
     desc
     """
     if request.user.is_authenticated:
-        del request.session['my_evaluation']
+        if 'my_evaluation' in request.session:
+            del request.session['my_evaluation']
         return redirect('experiment')
     else:
         messages.success(request, "Zaloguj się")

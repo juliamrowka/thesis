@@ -2,17 +2,12 @@
 
 {% block content %}
 
-
-<div class="container-fluid p-3">
-    <h1>Eksperyment</h1>
-    <hr>
-    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates, aut similique? Qui tempore officia
-        excepturi omnis sit perferendis deserunt porro? Deleniti deserunt quas, ducimus eaque aperiam corrupti aliquid,
-        repellat nostrum laborum aliquam pariatur cumque hic libero explicabo architecto doloremque maiores. Doloribus
-        unde minima quaerat repellendus quod cum optio velit ducimus error asperiores nostrum labore a aliquam facere
-        dicta quidem, qui quam consectetur. Quia illum autem odio doloribus excepturi dolorem odit eligendi pariatur
-        dolor provident. Incidunt, expedita delectus ipsam aliquam eos quaerat fuga omnis veritatis odio iusto deleniti
-        harum est esse saepe quas voluptate illum voluptatem?</p>
+<div class="container-fluid">
+    <div class="row m-3">
+        <h2>Eksperyment</h2>
+        <hr>
+        <p>Na tej stronie będzie widoczny podgląd wybranego pliku oraz wszystkie kroki tworzenia modelu.</p>
+    </div>
 
     <!-- <div class="row">
         <form method="POST" action="">
@@ -34,7 +29,7 @@
     </div> -->
 
     {% if excel_data %}
-    <div class="row">
+    <div class="row m-3">
         <div class="accordion" id="accordionPanelsStayOpenExample">
             <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -46,7 +41,7 @@
                 </h2>
                 <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
                     <div class="accordion-body">
-                        <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 200px;">
+                        <div data-bs-smooth-scroll="true" class="overflow-scroll" style="height: 20rem;">
                             <table class="table table-bordered table-condensed table-hover align-middle">
                                 {% for row in excel_data %}
                                 <tr>
@@ -62,7 +57,7 @@
             </div>
         </div>
     </div>
-    <br/>
+    <br />
     {% endif %}
 
 
@@ -80,70 +75,87 @@
     {% endfor %}
     {% endif %} -->
 
-    {% if my_pipeline %}
-    {% for list in my_pipeline %}
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                {{forloop.counter0}}
-                {{list.0}}
-                <div class="justify-content-right">
-                    <a class="btn btn-secondary" href="transformer-up/?pos={{forloop.counter0}}" role="button">W górę</a>
-                    <a class="btn btn-secondary" href="transformer-down/?pos={{forloop.counter0}}" role="button">W dół</a>
-                    <a class="btn btn-danger" href="delete-step/?pos={{forloop.counter0}}" role="button">Usuń</a>
+    <div class="row m-3">
+        <div class="col">
+            {% if my_pipeline %}
+            {% for list in my_pipeline %}
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <div class="fs-5">{{list.0}}</div>
+                        <div class="justify-content-right">
+                            <a class="btn btn-secondary rounded-pill" href="transformer-up/?pos={{forloop.counter0}}"
+                                role="button">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-arrow-up" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5" />
+                                </svg></a>
+                            <a class="btn btn-secondary rounded-pill" href="transformer-down/?pos={{forloop.counter0}}"
+                                role="button">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-arrow-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1" />
+                                </svg>
+                            </a>
+                            <a class="btn btn-danger rounded-pill" href="delete-step/?pos={{forloop.counter0}}"
+                                role="button">Usuń</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{list.1.0}}{{list.1.1}}
+                    <br />
+                    {{list.2.0}}{{list.2.1}}
+                    <!-- {% for i in list %}
+                        <p class="card-text">{{i}}</p>
+                        {% endfor %} -->
                 </div>
             </div>
-        </div>
-        <div class="card-body">
-            {{list.1.0}}{{list.1.1}}
             <br />
-            {{list.2.0}}{{list.2.1}}
-            <!-- {% for i in list %}
-            <p class="card-text">{{i}}</p>
-            {% endfor %} -->
-        </div>
-    </div>
-    <br />
-    {% endfor %}
-    {% endif %}
-
-
-    {% if my_estimator %}
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                {{my_estimator.0.0}}
-                <a class="btn btn-danger" href="{% url 'delete-est' %}" role="button">Usuń</a>
-            </div>
-        </div>
-        <div class="card-body">
-            {% for list in my_estimator.1 %}
-            {{list.0}}{{list.1}}
-            <br/>
             {% endfor %}
-        </div>
-    </div>
-    <br />
-    {% endif %}
+            {% endif %}
 
-    {% if my_evaluation %}
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                {{my_evaluation.0}}
-                <a class="btn btn-danger" href="{% url 'delete-ev' %}" role="button">Usuń</a>
+
+            {% if my_estimator %}
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <div class="fs-5">{{my_estimator.0.0}}</div>
+                        <a class="btn btn-danger rounded-pill" href="{% url 'delete-est' %}" role="button">Usuń</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% for list in my_estimator.1 %}
+                    {{list.0}}{{list.1}}
+                    <br />
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-        <div class="card-body">
-            {% for list in my_evaluation.1 %}
-            {{list.0}}{{list.1}}
-            <br/>
-            {% endfor %}
+            <br />
+            {% endif %}
+
+            {% if my_evaluation %}
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <div class="fs-5">{{my_evaluation.0}}</div>
+                        <a class="btn btn-danger rounded-pill" href="{% url 'delete-ev' %}" role="button">Usuń</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% for list in my_evaluation.1 %}
+                    {{list.0}}{{list.1}}
+                    <br />
+                    {% endfor %}
+                </div>
+            </div>
+            <br />
+            {% endif %}
         </div>
     </div>
-    <br />
-    {% endif %}
-    
+
 
     <!-- Stary sidebar -->
     <!-- <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
@@ -184,7 +196,6 @@
         </ul>
         <hr>
     </div> -->
-
 
 </div>
 

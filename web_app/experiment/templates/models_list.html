@@ -5,33 +5,42 @@
 
 <div class="container">
     {% if models %}
-    <table class="table table-hover ">
-        <thead>
-            <td>Nazwa modelu</td>
-            <td>Data wgrania</td>
-            <td>Akcje</td>
-        </thead>
-        <tbody class="table-group-divider">
-            {% for model in models %}
-            <tr>
-                <td><a href="#">{{ model.file.name }}</a> </td>
-                <td>{{ model.uploaded_at }}</td>
-                <td>
-                    <a href="{% url 'delete-model' model.id %}">Usuń</a>
-                    <a href="{% url 'download' model.id %}">Pobierz</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="row m-3">
+        <h2>Lista zapisanych modeli</h2>
+        <hr>
+        <p>Poniżej znajdują się zapisane modele. Możesz je pobrać na swoje urządzenie lub usunąć.</p>
+        <table class="table table-hover align-middle">
+            <thead>
+                <td>Nazwa modelu</td>
+                <td>Data zapisania</td>
+                <td>Akcje</td>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for model in models %}
+                <tr>
+                    <td><a href="#">{{ model.file.name }}</a> </td>
+                    <td>{{ model.uploaded_at }}</td>
+                    <td>
+                        <a class="btn btn-danger rounded-pill" href="{% url 'delete-model' model.id %}" role="button">Usuń</a>
+                        <a class="btn btn-secondary rounded-pill" href="{% url 'download' model.id %}" role="button">Pobierz</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="row m-3">
+        <p>Brak modeli</p>
+    </div>
+    {% endif %}
 
-    <div class="row">
-        <div class="col-md-6 mx-auto">
-          <h3>Instrukcja korzystania z modelu</h3>
-          <div>Przykładowy kod:</div>
-          <br />
-          <div class="border rounded p-3 bg-light">
-            <div><code class="text-secondary"># zaimportuj potrzebne paczki</code></div>
+    <div class="row m-3">
+        <h2>Instrukcja korzystania z modelu</h2>
+        <hr>
+        <p>Poniżej znajduje się przykładowy kod w języku python, dzięki któremu wykorzystasz pobrany model:</p>
+        <div class="border rounded p-3 bg-light">
+            <div><code class="text-secondary"># zaimportuj potrzebne biblioteki</code></div>
             <div><code>import pandas as pd</code></div>
             <div><code>from sklearn import metrics</code></div>
             <div><code>import pickle</code></div>
@@ -39,22 +48,16 @@
             <div><code class="text-secondary"># zaimportuj zbiór danych dla których chcesz zastosować model</code></div>
             <div><code>dataset = pd.read_excel('your_filename.xlsx') </code></div>
             <br />
-            <div><code>X = dataset.iloc[:, : -1].values </code></div>
-            <div><code>Y = dataset.iloc[:, -1].values </code></div>
+            <div><code>X = dataset.values </code></div>
             <br />
             <div><code class="text-secondary"># załaduj pobrany model</code></div>
             <div><code>with open('your_model.pickle', 'rb') as f:</code></div>
             <div><code>&nbsp;&nbsp;&nbsp;&nbsp;load_model = pickle.load(f)</code></div>
             <br />
             <div><code>y_pred = load_model.predict(X) </code></div>
-            <div><code>print('root mean squared error : ', metrics.r2_score(Y, y_pred)) </code></div>
-          </div>
+            <div><code>print(y_pred) </code></div>
         </div>
-      </div>
-
-    {% else %}
-    <p>Brak modeli</p>
-    {% endif %}
+    </div>
 </div>
 
 {% endblock %}
