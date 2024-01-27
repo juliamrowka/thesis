@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container-fluid">
-    <div class="row m-3">
+    <div class="row m-3 justify-content-center">
         <h2>Eksperyment</h2>
         <hr>
         <p>Na tej stronie będzie widoczny podgląd wybranego pliku oraz wszystkie kroki tworzenia modelu.</p>
@@ -29,7 +29,7 @@
     </div> -->
 
     {% if excel_data %}
-    <div class="row m-3">
+    <div class="row m-3 justify-content-center">
         <div class="accordion" id="accordionPanelsStayOpenExample">
             <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -75,7 +75,7 @@
     {% endfor %}
     {% endif %} -->
 
-    <div class="row m-3">
+    <div class="row m-3 justify-content-center">
         <div class="col">
             {% if my_pipeline %}
             {% for list in my_pipeline %}
@@ -104,6 +104,7 @@
                         </div>
                     </div>
                 </div>
+                {% if list.1 %}
                 <div class="card-body">
                     {{list.1.0}}{{list.1.1}}
                     <br />
@@ -112,6 +113,7 @@
                         <p class="card-text">{{i}}</p>
                         {% endfor %} -->
                 </div>
+                {% endif %}
             </div>
             <br />
             {% endfor %}
@@ -126,12 +128,14 @@
                         <a class="btn btn-danger rounded-pill" href="{% url 'delete-est' %}" role="button">Usuń</a>
                     </div>
                 </div>
+                {% if my_estimator.1 %}
                 <div class="card-body">
                     {% for list in my_estimator.1 %}
                     {{list.0}}{{list.1}}
                     <br />
                     {% endfor %}
                 </div>
+                {% endif %}
             </div>
             <br />
             {% endif %}

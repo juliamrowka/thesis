@@ -661,18 +661,21 @@ def compute(request):
             
             # możliwość zapisania modelu w bazie danych
             if request.method == 'POST':
-                filename = request.POST['filename']             
+                filename = request.POST['filename']
                 file = "documents/user_" + str(request.user.id) + "/models/" + filename + ".pickle"
-                os.makedirs("documents/user_" + str(request.user.id) + "/models/", exist_ok=True)
+                existing_files = MLModel.objects.filter(file = file, user = request.user)
+                if existing_files.count() == 0:
+                    os.makedirs("documents/user_" + str(request.user.id) + "/models/", exist_ok=True)
+                    with open(file, 'wb') as f:
+                        pickle.dump(pipe, f)
 
-                with open(file, 'wb') as f:
-                    pickle.dump(pipe, f)
-
-                newmodel = MLModel(file = file)
-                newmodel.user = request.user
-                newmodel.save()
-                return redirect('models')
-
+                    newmodel = MLModel(file = file)
+                    newmodel.user = request.user
+                    newmodel.save()
+                    messages.success(request, "Pomyślnie zapisano model!")
+                    return redirect('models')
+                elif existing_files.count() > 0:
+                    messages.success(request, "Model o tej nazwie już istnieje")
             return render(request, 'compute.html', context)
         
         elif 'filename' not in request.session:
@@ -710,8 +713,9 @@ def download_model(request, pk):
                 response = HttpResponse(fl.read(), content_type="application/octet-stream")
                 response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(filename)
                 print(os.path.basename(filename))
-                return response
-        messages.success(request, "Pomyślnie pobrano plik!")
+                messages.success(request, "Pomyślnie pobrano plik!")
+                return response 
+            # and redirect('models')
         return redirect('experiment')
     else:
         messages.success(request, "Zaloguj się")

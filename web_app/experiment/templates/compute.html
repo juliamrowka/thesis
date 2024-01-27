@@ -3,19 +3,18 @@
 {% block content %}
 
 <div class="container-fluid">
-  <div class="row m-3">
+  <div class="row m-3 justify-content-center">
     <h2>Wyniki</h2>
     <hr>
     <p>Metody oceny zależą od tego czy wybrany estymator służy do klasyfikacji czy regresji.</p>
   </div>
 
   {% if scores1_reg %}
-  <div class="row m-3">
+  <div class="row m-3 justify-content-center">
     <table class="table table-hover">
       <thead>
         <th>Metoda oceny</th>
-      <th class="text-center">Wynik</th>
-      <th>Wynik</th>
+        <th class="text-center">Wynik</th>
       </thead>
       <tbody class="table-group-divider">
         <tr>
@@ -40,10 +39,12 @@
   {% endif %}
 
   {% if scores1_clf %}
-  <div class="row m-3">
+  <div class="row m-3 justify-content-center">
     <table class="table table-hover">
-      <th>Metoda oceny</th>
-      <th class="text-center">Wynik</th>
+      <thead>
+        <th>Metoda oceny</th>
+        <th class="text-center">Wynik</th>
+      </thead>
       <tbody class="table-group-divider">
         <tr>
           <th scope="row">Precision macro</th>
@@ -79,11 +80,13 @@
   {% endif %}
 
   {% if scores2_reg %}
-  <div class="row m-3">
+  <div class="row m-3 justify-content-center">
     <table class="table table-hover">
-      <th>Metoda oceny</th>
-      <th class="text-center">Uśredniony wynik</th>
-      <th class="text-center">Odchylenie standardowe</th>
+      <thead>
+        <th>Metoda oceny</th>
+        <th class="text-center">Uśredniony wynik</th>
+        <th class="text-center">Odchylenie standardowe</th>
+      </thead>
       <tbody class="table-group-divider">
         <tr>
           <th scope="row">Explained variance score</th>
@@ -111,11 +114,13 @@
   {% endif %}
 
   {% if scores2_clf %}
-  <div class="row m-3">
+  <div class="row m-3 justify-content-center">
     <table class="table table-hover">
-      <th>Metoda oceny</th>
-      <th class="text-center">Uśredniony wynik</th>
-      <th class="text-center">Odchylenie standardowe</th>
+      <thead>
+        <th>Metoda oceny</th>
+        <th class="text-center">Uśredniony wynik</th>
+        <th class="text-center">Odchylenie standardowe</th>
+      </thead>
       <tbody class="table-group-divider">
         <tr>
           <th scope="row">Precision macro</th>
@@ -159,7 +164,7 @@
 
 
 
-  <div class="row m-3">
+  <div class="row m-3 justify-content-center">
     <h2>Zapisz model</h2>
     <hr>
     <p>Możesz zapisać swój model w aplikacji, aby później go pobrać na swoje urządzenie.</p>
@@ -178,14 +183,13 @@
     </form>
   </div>
 
-  <div class="row m-3">
+  <div class="row m-3 justify-content-center">
     <h2>Instrukcja korzystania z modelu</h2>
     <hr>
     <p>Poniżej znajduje się przykładowy kod w języku python, dzięki któremu wykorzystasz pobrany model:</p>
     <div class="border rounded p-3 bg-light">
       <div><code class="text-secondary"># zaimportuj potrzebne biblioteki</code></div>
       <div><code>import pandas as pd</code></div>
-      <div><code>from sklearn import metrics</code></div>
       <div><code>import pickle</code></div>
       <br />
       <div><code class="text-secondary"># zaimportuj zbiór danych dla których chcesz zastosować model</code></div>
@@ -201,7 +205,7 @@
       <div><code>print(y_pred) </code></div>
     </div>
   </div>
-  
+
 
 </div>
 

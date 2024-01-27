@@ -1,16 +1,100 @@
-<div id="sidebar" class="collapse collapse-horizontal show border-end bg-dark">
+<div class="offcanvas offcanvas-start show text-bg-dark" data-bs-theme="dark" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+    id="sidebar">
+    <div class="nav d-flex flex-column">
 
-    <div id="sidebar-nav"
-        class="nav d-flex flex-column border-0 rounded-0 text-sm-start min-vh-100 px-3 pt-2 text-white" style="width: max-content">
+        <div id="sidebar-nav"
+            class="nav d-flex flex-column border-0 rounded-0 text-sm-start min-vh-100 px-3 pt-2 text-white">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title"><a href="{% url 'experiment' %}" class="navbar-brand text-center"><span
+                            class="fs-2 d-none d-sm-inline">Eksperyment</span></a></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <hr>
 
-        <a href="{% url 'experiment' %}" class="navbar-brand text-center"><span class="fs-2 d-none d-sm-inline">Eksperyment</span></a>
+            <div class="d-flex flex-column flex-fill">
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'upload' %}">Wybierz źródło
+                    danych</a>
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'transformer' %}">Dodaj
+                    transformację</a>
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'estimator' %}">Dodaj
+                    estymator</a>
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'evaluation' %}">Dodaj metodę
+                    podziału</a>
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'compute' %}">Wykonaj</a>
+            </div>
+            <hr>
+            <div class="dropdown pb-4">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="d-none d-sm-inline mx-1">Dzień dobry, {{user.first_name}}!</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                    <li><a class="dropdown-item" href="{% url 'home' %}">Strona główna</a></li>
+                    <li><a class="dropdown-item" href="{% url 'upload' %}">Zbiory danych</a></li>
+                    <li><a class="dropdown-item" href="{% url 'models' %}">Zapisane modele</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- <div class="offcanvas-header">
+            <h5 class="offcanvas-title"><a href="{% url 'experiment' %}" class="navbar-brand text-center"><span
+                        class="fs-2 d-none d-sm-inline">Eksperyment</span></a></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <hr>
+            <div class="d-flex flex-column flex-fill">
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'upload' %}">Wybierz źródło
+                    danych</a>
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'transformer' %}">Dodaj
+                    transformację</a>
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'estimator' %}">Dodaj estymator</a>
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'evaluation' %}">Dodaj metodę
+                    oceny</a>
+                <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'compute' %}">Wykonaj</a>
+            </div>
+        </div>
+        <div class="offcanvas-footer">
+            <div class="dropdown pb-4">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="d-none d-sm-inline mx-1">Dzień dobry, {{user.first_name}}!</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                    <li><a class="dropdown-item" href="{% url 'home' %}">Strona główna</a></li>
+                    <li><a class="dropdown-item" href="{% url 'upload' %}">Zbiory danych</a></li>
+                    <li><a class="dropdown-item" href="{% url 'models' %}">Zapisane modele</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a></li>
+                </ul>
+            </div>
+        </div> -->
+    </div>
+
+
+    <!-- <div id="sidebar-nav"
+        class="nav d-flex flex-column border-0 rounded-0 text-sm-start min-vh-100 px-3 pt-2 text-white"
+        style="width: max-content">
+
+        <a href="{% url 'experiment' %}" class="navbar-brand text-center"><span
+                class="fs-2 d-none d-sm-inline">Eksperyment</span></a>
         <hr>
 
         <div class="d-flex flex-column flex-fill">
-            <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'upload' %}">Wybierz źródło danych</a>
-            <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'transformer' %}">Dodaj transformację</a>
+            <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'upload' %}">Wybierz źródło
+                danych</a>
+            <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'transformer' %}">Dodaj
+                transformację</a>
             <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'estimator' %}">Dodaj estymator</a>
-            <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'evaluation' %}">Dodaj metodę podziału</a>
+            <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'evaluation' %}">Dodaj metodę
+                oceny</a>
             <a class="nav-link fs-5 p-2 mb-2" data-bs-parent="#sidebar" href="{% url 'compute' %}">Wykonaj</a>
         </div>
         <hr>
@@ -29,5 +113,5 @@
                 <li><a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a></li>
             </ul>
         </div>
-    </div>
+    </div> -->
 </div>

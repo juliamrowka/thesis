@@ -5,7 +5,7 @@
 
 <div class="container">
     {% if models %}
-    <div class="row m-3">
+    <div class="row m-3 justify-content-center">
         <h2>Lista zapisanych modeli</h2>
         <hr>
         <p>Poniżej znajdują się zapisane modele. Możesz je pobrać na swoje urządzenie lub usunąć.</p>
@@ -30,19 +30,18 @@
         </table>
     </div>
     {% else %}
-    <div class="row m-3">
+    <div class="row m-3 justify-content-center">
         <p>Brak modeli</p>
     </div>
     {% endif %}
 
-    <div class="row m-3">
+    <div class="row m-3 justify-content-center">
         <h2>Instrukcja korzystania z modelu</h2>
         <hr>
         <p>Poniżej znajduje się przykładowy kod w języku python, dzięki któremu wykorzystasz pobrany model:</p>
         <div class="border rounded p-3 bg-light">
             <div><code class="text-secondary"># zaimportuj potrzebne biblioteki</code></div>
             <div><code>import pandas as pd</code></div>
-            <div><code>from sklearn import metrics</code></div>
             <div><code>import pickle</code></div>
             <br />
             <div><code class="text-secondary"># zaimportuj zbiór danych dla których chcesz zastosować model</code></div>
