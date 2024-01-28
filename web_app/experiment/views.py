@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 # from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -21,9 +21,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.svm import LinearSVR, LinearSVC
 from sklearn.naive_bayes import CategoricalNB
-from sklearn.model_selection import cross_val_score, cross_validate
-from sklearn.metrics import recall_score, accuracy_score, precision_score, max_error, r2_score, mean_squared_error, d2_absolute_error_score, explained_variance_score, mean_absolute_error, f1_score
-import numpy as np
+from sklearn.model_selection import cross_validate
+from sklearn.metrics import recall_score, accuracy_score, precision_score, r2_score, mean_squared_error, explained_variance_score, mean_absolute_error, f1_score
 
 
 # functions
