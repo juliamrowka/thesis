@@ -1,7 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-# from django.contrib.auth import authenticate, login, logout
-# from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import DocumentForm
 from .models import Document, MLModel
@@ -9,8 +7,6 @@ import openpyxl as op
 import os
 import pandas as pd
 import pickle
-# from sklearn import preprocessing
-# from sklearn import datasets
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
 from sklearn.decomposition import PCA
 from sklearn.compose import ColumnTransformer
@@ -27,30 +23,20 @@ from sklearn.metrics import recall_score, accuracy_score, precision_score, r2_sc
 
 # functions
 def switch_order(arr, a, b):
-    """
-    """
     tmp = arr[a]
     arr[a] = arr[b]
     arr[b] = tmp
 
 def switch_up(arr, a):
-    """
-    Changes position of elemenet of list to one up
-    """
     if a > 0:
         switch_order(arr, a, a-1)
 
 def switch_down(arr, a):
-    """
-    """
     if a < len(arr)-1:
         switch_order(arr, a, a+1)
 
 # views
 def model_form_upload(request):
-    """
-    show upload form
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             form = DocumentForm(request.POST, request.FILES)
@@ -62,13 +48,11 @@ def model_form_upload(request):
                 newdoc.save()
                 messages.success(request, "Pomyślnie przesłano plik!")
                 request.session['filename'] = filename
-                # request.session['my_pipeline'] = []
                 return redirect('experiment')
             elif files.count() > 0:
                 messages.success(request, "Plik o tej nazwie już istnieje")
         else:
             form = DocumentForm()
-            # return render(request, 'upload.html', {'form': form})
         documents = Document.objects.filter(user=request.user)
         return render(request, 'upload.html', {'documents': documents, 'form': form})
     else:
@@ -76,9 +60,6 @@ def model_form_upload(request):
         return redirect('home')
     
 def choose_file(request, pk):
-    """
-    description
-    """
     if request.user.is_authenticated:
         choosen_file = Document.objects.get(id=pk)
         filename = choosen_file.document
@@ -89,25 +70,18 @@ def choose_file(request, pk):
         if 'my_pipeline' in request.session: del request.session['my_pipeline']
         if 'my_estimator' in request.session: del request.session['my_estimator']
         if 'my_evaluation' in request.session: del request.session['my_evaluation']
-        # print(filename)
         return redirect('experiment')
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
     
 def delete_file(request, pk):
-    """
-    description
-    """
     if request.user.is_authenticated:
         to_delete = get_object_or_404(Document, pk=pk)
-        print(f'File to delete: {to_delete}')
         filename = str(to_delete.document)
-        print(f'Path of file to delete: {filename}')
         if to_delete and filename:
             to_delete.delete()
             os.remove(filename)
-            print('file removed')
             messages.success(request, "Pomyślnie usunięto plik!")
         if filename == request.session['filename']:
             del request.session['filename']
@@ -116,16 +90,12 @@ def delete_file(request, pk):
             if 'my_pipeline' in request.session: del request.session['my_pipeline']
             if 'my_estimator' in request.session: del request.session['my_estimator']
             if 'my_evaluation' in request.session: del request.session['my_evaluation']
-            print('session filename')
         return redirect('experiment')
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
 
 def experiment(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if 'filename' in request.session:
             if len(request.session['filename']) > 0:
@@ -163,9 +133,6 @@ def experiment(request):
         return redirect('home')
 
 def transformer(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         return render(request, 'transformer.html', {})
     else:
@@ -173,9 +140,6 @@ def transformer(request):
         return redirect('home')
 
 def std(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
@@ -198,13 +162,9 @@ def std(request):
         return redirect('home')
     
 def minmax(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             column = request.POST['choosen_column']
-            # test
             if 'my_pipeline' not in request.session:
                 request.session['my_pipeline'] = [['MinMaxScaler', ('Wybrana kolumna: ', int(column))]]
             else:
@@ -212,11 +172,9 @@ def minmax(request):
                 pipe.append(['MinMaxScaler', ('Wybrana kolumna: ', int(column))])
                 request.session['my_pipeline'] = pipe
 
-
             return redirect('transformer')
         elif 'max_column' in request.session:
             max_column = request.session['max_column']
-            # print(type(max_column))
             return render(request, 'preprocessing/minmax.html', {'max_column': max_column})
         else:
             messages.success(request, "Najpierw wybierz plik")
@@ -226,9 +184,6 @@ def minmax(request):
         return redirect('home')
     
 def norm(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             norm_type = request.POST['norm_type']
@@ -251,12 +206,8 @@ def norm(request):
         return redirect('home')
     
 def pca(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
-            # parameter_n = None
             if 'my_pipeline' not in request.session:
                 request.session['my_pipeline'] = [['PCA']]
             else:
@@ -275,9 +226,6 @@ def pca(request):
         return redirect('home')
     
 def estimator(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         return render(request, 'estimator.html', {})
     else:
@@ -285,9 +233,6 @@ def estimator(request):
         return redirect('home')
     
 def ord_least_squares(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             request.session['my_estimator'] = [('LinearRegression', 'reg')]
@@ -302,9 +247,6 @@ def ord_least_squares(request):
         return redirect('home')
     
 def svm_regression(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             epsilon = request.POST['epsilon']
@@ -322,9 +264,6 @@ def svm_regression(request):
         return redirect('home')
     
 def nn_regression(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             neighbors = request.POST['neighbors']
@@ -340,9 +279,6 @@ def nn_regression(request):
         return redirect('home')
     
 def dt_regression(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             criterion = request.POST['criterion']
@@ -359,9 +295,6 @@ def dt_regression(request):
         return redirect('home')
     
 def categorical_nb(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             alpha = request.POST['alpha']
@@ -377,9 +310,6 @@ def categorical_nb(request):
         return redirect('home')
     
 def svm_classification(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             c_parameter = request.POST['c_parameter']
@@ -397,14 +327,9 @@ def svm_classification(request):
         return redirect('home')
     
 def nn_classification(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             neighbors = request.POST['neighbors']
-            # weight = request.POST['weight']
-            # p_parameter = request.POST['p_parameter']
             request.session['my_estimator'] = [('KNeighborsClassifier', 'clf'), [('Liczba sąsiadów: ', neighbors)]]
             return redirect('experiment')
         elif 'filename' in request.session:
@@ -417,9 +342,6 @@ def nn_classification(request):
         return redirect('home')
 
 def dt_classification(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             criterion = request.POST['criterion']
@@ -436,9 +358,6 @@ def dt_classification(request):
         return redirect('home')
     
 def evaluation(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         return render(request, 'evaluation.html', {})
     else:
@@ -446,9 +365,6 @@ def evaluation(request):
         return redirect('home')
 
 def random_split(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             test_size = request.POST['test_size']
@@ -464,9 +380,6 @@ def random_split(request):
         return redirect('home')  
 
 def cross_validation(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             cv = request.POST['cv']
@@ -482,9 +395,6 @@ def cross_validation(request):
         return redirect('home')  
 
 def compute(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         if 'filename' and 'my_estimator' and 'my_evaluation' in request.session:
 
@@ -501,41 +411,27 @@ def compute(request):
                     if i[0] == 'StandardScaler':
                         column = i[1][1]-1
 
-                        # brak zmiany kolejności kolumn - rozwiązanie 1
+                        # brak zmiany kolejności kolumn
                         before = (f'pass_before_{x}', 'passthrough', [v for v in range(column)])
                         trans = (f'std_{x}', StandardScaler(), [column])
                         after = (f'pass_after_{x}', 'passthrough', [v for v in range(column+1, len(max_c))])
 
                         transformer_list.append((f'ct_std_{x}', ColumnTransformer([before, trans, after])))
-
-                        # brak zmiany kolejności kolumn - rozwiązanie 2
-                        # before = [(f"pass_before_{x}_{v}", "passthrough", [v]) for v in range(column)]
-                        # trans = [(f'std_{x}', StandardScaler(), [column])]
-                        # after = [(f"pass_after_{x}_{v}", "passthrough", [v]) for v in range(column+1, len(max_c))]
-
-                        # transformer_list.append((f'ct_std_{x}', ColumnTransformer( before + trans + after )))
-
-                        # transformer_list.append((f'ct_std_{x}', ColumnTransformer([(f'std_{x}', StandardScaler(), [column])], remainder='passthrough')))                   
-
+              
                     if i[0] == 'MinMaxScaler':
                         column = i[1][1]-1
 
-                        # brak zmiany kolejności kolumn - rozwiązanie 1
+                        # brak zmiany kolejności kolumn
                         before = (f'pass_before_{x}', 'passthrough', [v for v in range(column)])
                         trans = (f'std_{x}', MinMaxScaler(), [column])
                         after = (f'pass_after_{x}', 'passthrough', [v for v in range(column+1, len(max_c))])
 
-                        transformer_list.append((f'ct_minmax_{x}', ColumnTransformer( [before, trans, after] )))
-
-                        # transformer_list.append((f'ct_minmax_{x}', ColumnTransformer([(f'minmax_{x}', MinMaxScaler(), [column])], remainder='passthrough')))                    
+                        transformer_list.append((f'ct_minmax_{x}', ColumnTransformer( [before, trans, after] )))                  
 
                     if i[0] == 'Normalizer': 
                         transformer_list.append((f'ct_norm_{x}', ColumnTransformer([(f'norm_{x}', Normalizer(norm=i[1][1]), [x for x in range(len(max_c))])])))
 
                     if i[0] == 'PCA': 
-                        # print(max_c)
-                        # max_c = list(range(1, i[1][1]+1))
-                        # print(max_c)
                         transformer_list.append((f'pca_{x}', PCA()))
 
                     x = x+1
@@ -557,7 +453,7 @@ def compute(request):
             # odczytanie pliku wgranego przez użytkownika
             wb = pd.read_excel(io=request.session['filename'], header=0)
 
-            # podział danych na x i y (zmienne zależne i zmienną niezależną)
+            # podział danych na x i y (kolumny cech i kolumnę etykiet)
             X = wb.iloc[:, : -1] 
             y = wb.iloc[:, -1]
 
@@ -568,22 +464,12 @@ def compute(request):
                 test_size = float(ev[1][0][1])
                 X_train,X_test,y_train,y_test=train_test_split(X, y, test_size=test_size, random_state=0)              
 
-                # print(pipe_trans)
-                # print(X.shape)
-                # pipe_trans.fit(wb)
-                # x_trans = pipe_trans.transform(wb)
-                # print(x_trans)
-
                 pipe.fit(X_train,y_train)
                 y_pred=pipe.predict(X_test)
                 pipe.score(X_test,y_test)
 
                 if est[0][1] == 'reg':
                     
-                    # print(f'pipe score {pipe.score(X_test,y_test)}')
-                    # print(f'd2_absolute_error_score {d2_absolute_error_score(y_test, y_pred)}')
-                    # print(f'r2 score {r2_score(y_test, y_pred)}')
-                    # print(f'mean_squared_error {mean_squared_error(y_test, y_pred)}')
                     scores1_reg = {
                         'explained_variance_score': explained_variance_score(y_test, y_pred),
                         'r2_score': r2_score(y_test, y_pred),
@@ -594,13 +480,9 @@ def compute(request):
                     for x in scores1_reg.keys():
                         scores1_reg[x] = round(scores1_reg[x], 4)
 
-                    print(scores1_reg)
                     context = {'scores1_reg': scores1_reg}
 
                 elif est[0][1] == 'clf':
-                    # print(np.transpose(np.array([y_test,y_pred])))
-                    # print(f'precision score {precision_score(y_test, y_pred, average="macro")}')
-                    # print(f'recall score {recall_score(y_test, y_pred, average="macro")}')
 
                     scores1_clf = {
                         'precision_macro': precision_score(y_test, y_pred, average='macro'),
@@ -626,8 +508,6 @@ def compute(request):
 
                     scores2_reg = cross_validate(pipe, X, y, cv=cv, scoring=scoring)
 
-                    print(scores2_reg)
-
                     for x in scores2_reg.keys():
                         scores2_reg[x] = [scores2_reg[x].mean(), scores2_reg[x].std()]
 
@@ -644,15 +524,12 @@ def compute(request):
 
                     scores2_clf = cross_validate(pipe, X, y, cv=cv, scoring=scoring)
 
-                    print(scores2_clf)
-
                     for x in scores2_clf.keys():
                         scores2_clf[x] = [scores2_clf[x].mean(), scores2_clf[x].std()]
 
                     for x, y in scores2_clf.items():
                         list_clf = []
                         for j in y:
-                            print(j)
                             list_clf.append(round(j, 4))
                         scores2_clf[x] = list_clf
 
@@ -690,9 +567,6 @@ def compute(request):
         return redirect('home')
     
 def show_models(request):
-    """
-    description
-    """
     if request.user.is_authenticated:
         models = MLModel.objects.filter(user=request.user)
         return render(request, 'models_list.html', {'models': models})
@@ -701,9 +575,6 @@ def show_models(request):
         return redirect('home')
     
 def download_model(request, pk):
-    """
-    description
-    """
     if request.user.is_authenticated:
         to_download = get_object_or_404(MLModel, pk=pk)
         filename = str(to_download.file)
@@ -711,19 +582,14 @@ def download_model(request, pk):
             with open(filename, 'rb') as fl:
                 response = HttpResponse(fl.read(), content_type="application/octet-stream")
                 response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(filename)
-                print(os.path.basename(filename))
                 messages.success(request, "Pomyślnie pobrano plik!")
                 return response 
-            # and redirect('models')
         return redirect('experiment')
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
 
 def delete_model(request, pk):
-    """
-    description
-    """
     if request.user.is_authenticated:
         to_delete = get_object_or_404(MLModel, pk=pk)
         filename = str(to_delete.file)
@@ -737,9 +603,6 @@ def delete_model(request, pk):
         return redirect('home')
 
 def transformer_up(request):
-    """
-    desc
-    """
     if request.user.is_authenticated:
         if 'my_pipeline' in request.session:
             transformer_list = request.session['my_pipeline']
@@ -752,9 +615,6 @@ def transformer_up(request):
         return redirect('home')
     
 def transformer_down(request):
-    """
-    desc
-    """
     if request.user.is_authenticated:
         if 'my_pipeline' in request.session:
             transformer_list = request.session['my_pipeline']
@@ -767,9 +627,6 @@ def transformer_down(request):
         return redirect('home')
     
 def delete_step(request):
-    """
-    desc
-    """
     if request.user.is_authenticated:
         if 'my_pipeline' in request.session:
             transformer_list = request.session['my_pipeline']
@@ -785,9 +642,6 @@ def delete_step(request):
         return redirect('home')
     
 def delete_est(request):
-    """
-    desc
-    """
     if request.user.is_authenticated:
         if 'my_estimator' in request.session:
             del request.session['my_estimator']
@@ -797,9 +651,6 @@ def delete_est(request):
         return redirect('home')
 
 def delete_ev(request):
-    """
-    desc
-    """
     if request.user.is_authenticated:
         if 'my_evaluation' in request.session:
             del request.session['my_evaluation']

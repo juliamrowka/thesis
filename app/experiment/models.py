@@ -15,6 +15,5 @@ class Document(models.Model):
 
 class MLModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # description = models.CharField(max_length=255, blank=True)
     file = models.FileField(upload_to=user_directory_path_models)
     uploaded_at = models.DateTimeField(auto_now_add=True)

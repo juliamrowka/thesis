@@ -1,8 +1,7 @@
 from django.urls import path
 from . import views
-from . import forms
 
-# app_name = "crm" #application namespace
+
 urlpatterns = [
     path('', views.experiment, name='experiment'),
     path('upload/', views.model_form_upload, name='upload'),
@@ -34,8 +33,4 @@ urlpatterns = [
     path('delete-step/', views.delete_step, name='delete-step'),
     path('delete-est/', views.delete_est, name='delete-est'),
     path('delete-ev/', views.delete_ev, name='delete-ev'),
-
-    # path('compute/save-model', views.save_model, name='save_model'),
-    # path('documents', views.choose_file, name='choose_file')
-
 ]
