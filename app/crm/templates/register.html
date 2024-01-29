@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
 <div class="container-fluid">
     <div class="row m-3 justify-content-center">
         <h1>Zarejestruj się</h1>
         <hr>
-        <p>Zarejestruj się, aby móc tworzyć modele uczenia maszynowego i mieć do nich dostęp z każdego urządzenia!</p>
+        <p>Zarejestruj się, aby móc tworzyć modele uczenia maszynowego
+            i mieć do nich dostęp z każdego urządzenia!</p>
         <form method="POST" action="">
             {% csrf_token %}
             {% if form.errors %}
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                Your Form Has Errors
+                Twój formularz ma błędy
                 {% for field in form %}
                 {% if field.errors %}
                 {{ field.errors }}
@@ -22,11 +22,12 @@
             {% endif %}
             {{ form.as_p }}
             <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-secondary mb-3">Zarejestruj</button>
+                <button type="submit" class="btn btn-secondary mb-3">
+                    Zarejestruj
+                </button>
                 <a href="{% url 'home' %}">Masz już konto? Zaloguj się!</a>
             </div>
         </form>
     </div>
 </div>
-
 {% endblock %}

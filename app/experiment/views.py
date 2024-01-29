@@ -597,7 +597,7 @@ def delete_model(request, pk):
             to_delete.delete()
             os.remove(filename)
             messages.success(request, "Pomyślnie usunięto plik!")
-        return redirect('experiment')
+        return redirect('models')
     else:
         messages.success(request, "Zaloguj się")
         return redirect('home')
